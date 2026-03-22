@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using CorleyEngine.Components;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace CorleyEngine.Core;
@@ -37,12 +38,29 @@ public class Entity(string name) {
     /// it removes the need to check the component list every time.
     private Transform _transform;
 
+    public Transform Transform => _transform;
+
     /// <summary>
-    /// Attempts to get the Transform. Returns true if the Entity is OnStage, false if it is a Director.
+    /// Creates a new "OnStage" Entity (has a <see cref="Transform"/> already attached).
     /// </summary>
-    public bool TryGetTransform(out Transform transform) {
-        transform = _transform;
-        return _transform != null;
+    /// <param name="name">The name of the Entity.</param>
+    /// <param name="position">Where in the <see cref="Scene"/> the Entity should be spawned.</param>
+    /// <returns>A new Stage Entity.</returns>
+    public static Entity CreateStageEntity(string name, Vector2 position) {
+
+        Entity entity = new Entity(name);
+        entity.AddComponent(new Transform(position));
+        return entity;
+
+    }
+
+    /// <summary>
+    /// Creates a new "Director" Entity (no <see cref="Transform"/> attached.)
+    /// </summary>
+    /// <param name="name">The name of the Entity.</param>
+    /// <returns>A new Director Entity</returns>
+    public static Entity CreateDirector(string name) {
+        return new Entity(name);
     }
 
     /// <summary>
@@ -61,6 +79,9 @@ public class Entity(string name) {
         if (component is Transform transform) {
             if (_transform != null) return;
             _transform = transform;
+        } else if (component is Component c) {
+            c.Entity = this;
+            c.Awake();
         }
 
         _components.Add(component);

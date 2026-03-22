@@ -19,16 +19,21 @@ public class CorleyGame : Game {
 
     protected override void Initialize() {
 
+        Log.Info("Initialising Engine...");
+
         // Test Code!!!
 
         // Make a new scene.
         _activeScene = new Scene();
 
-        // Create a "player" entity and give it some components.
-        _player = new Entity("Player Box");
-        Transform transform = new(new Vector2(100, 100));
-        _player.AddComponent(transform);
-        _player.AddComponent(new ClickMover(transform, 300f));
+        // Create a "player" for testing.
+        _player = Entity.CreateStageEntity("Player", new(100, 100));
+        _player.AddComponent(new CharacterController());
+        _player.AddComponent(new PlayerInput());
+        Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
+        pixel.SetData(new[] { Color.White });
+        _player.AddComponent(new SpriteRenderer(pixel));
+        _player.Transform.CurrentScale = new Vector2(25, 50);
 
         // Add the "player" to the scene.
         _activeScene.AddEntity(_player);
@@ -38,17 +43,9 @@ public class CorleyGame : Game {
 
     protected override void LoadContent() {
 
+        Log.Info("Loading Content...");
+
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-
-        // Create a placeholder white box texture for the player.
-        Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
-
-        // Add a SpriteRenderer component to the player with the placeholder texture.
-        _player.AddComponent(new SpriteRenderer(pixel));
-
-        // Bump the scale of the player's transform so we can see it.
-        _player.GetComponent<Transform>().CurrentScale = new Vector2(50, 50);
 
     }
 

@@ -15,6 +15,11 @@ public abstract class Component : IComponent {
     public Entity Entity { get; internal set; }
 
     /// <summary>
+    /// Access to the <see cref="Entity"/>'s transform. Can be null (if the Entity is a Director).
+    /// </summary>
+    public Transform Transform => Entity?.Transform;
+
+    /// <summary>
     /// Called once when the component is added to an Entity.
     /// </summary>
     public virtual void Awake() { }
