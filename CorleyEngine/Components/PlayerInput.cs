@@ -1,4 +1,5 @@
 using CorleyEngine.Core;
+using Microsoft.Xna.Framework;
 
 namespace CorleyEngine.Components;
 
@@ -22,8 +23,16 @@ public class PlayerInput : Component {
 
         if (_controller == null) return;
 
-        if (Input.IsActionTriggered("Primary")) {
-            _controller.MoveTo(Input.CursorPosition);
+        if (Input.IsActionTriggered("Primary"))
+        {
+            // 1. Get the raw screen click
+            Vector2 rawClick = Input.CursorPosition;
+
+            // 2. Translate it to World Space
+            Vector2 worldTarget = Camera.MainCamera.ScreenToWorldSpace(rawClick);
+
+            // 3. Command the controller using the true world coordinates
+            _controller.MoveTo(worldTarget);
         }
 
     }

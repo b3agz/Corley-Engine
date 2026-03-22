@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
+using CorleyEngine.Components;
+using Microsoft.Xna.Framework;
 
 namespace CorleyEngine.Core;
 
@@ -9,6 +11,11 @@ namespace CorleyEngine.Core;
 public class Scene {
 
     private readonly List<Entity> _entities = [];
+
+    /// <summary>
+    /// The camera that is currently viewing this scene.
+    /// </summary>
+    public Camera MainCamera { get; set; }
 
     /// <summary>
     /// Adds an Entity to the scene.
@@ -42,8 +49,23 @@ public class Scene {
     /// Draws every "OnStage" Entity in the scene.
     /// </summary>
     public void Draw(SpriteBatch spriteBatch) {
+
+        // 1. Get the camera's matrix (or use Identity if no camera exists, which means no offset)
+        Matrix viewMatrix = MainCamera != null ? MainCamera.GetViewMatrix() : Matrix.Identity;
+
+        // 2. Begin the batch using the camera's illusion!
+        // Note: SpriteSortMode.Deferred and BlendState.AlphaBlend are MonoGame defaults.
+        spriteBatch.Begin(
+            SpriteSortMode.Deferred,
+            BlendState.AlphaBlend,
+            null, null, null, null,
+            viewMatrix // <--- The magic happens here
+        );
+
         foreach (Entity entity in _entities) {
             entity.Draw(spriteBatch);
         }
+
+        spriteBatch.End();
     }
 }

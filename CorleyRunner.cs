@@ -9,7 +9,6 @@ public class CorleyGame : Game {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
     private Scene _activeScene;
-    private Entity _player;
 
     public CorleyGame() {
         _graphics = new GraphicsDeviceManager(this);
@@ -21,24 +20,11 @@ public class CorleyGame : Game {
 
         Log.Info("Initialising Engine...");
 
-        // Test Code!!!
-
         // Make a new scene.
         _activeScene = new Scene();
 
-        // Create a "player" for testing.
-        _player = Entity.CreateStageEntity("Player", new(100, 100));
-        _player.AddComponent(new CharacterController());
-        _player.AddComponent(new PlayerInput());
-        Texture2D pixel = new Texture2D(GraphicsDevice, 1, 1);
-        pixel.SetData(new[] { Color.White });
-        _player.AddComponent(new SpriteRenderer(pixel));
-        _player.Transform.CurrentScale = new Vector2(25, 50);
-
-        // Add the "player" to the scene.
-        _activeScene.AddEntity(_player);
-
         base.Initialize();
+
     }
 
     protected override void LoadContent() {
@@ -46,6 +32,29 @@ public class CorleyGame : Game {
         Log.Info("Loading Content...");
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+        // Temporary background image for camera testing.
+        Texture2D bgImage = Content.Load<Texture2D>("tempbg");
+        Entity background = Entity.CreateStageEntity("Background", new(-560, -240));
+        background.AddComponent(new SpriteRenderer(bgImage));
+        _activeScene.AddEntity(background);
+
+        // Create a moveable "player" for testing.
+        Entity player = Entity.CreateStageEntity("Player", new(100, 100));
+        player.AddComponent(new CharacterController());
+        player.AddComponent(new PlayerInput());
+        Texture2D playerImage = Content.Load<Texture2D>("PlaceholderMan");
+        player.AddComponent(new SpriteRenderer(playerImage));
+        player.Transform.CurrentScale = new Vector2(0.2f, 0.2f);
+
+        // Whack a camera on the player so we can see it in action.
+        Camera playerCam = new();
+        player.AddComponent(playerCam);
+
+        // Add the "player" to the scene.
+        _activeScene.AddEntity(player);
+
+        _activeScene.MainCamera = playerCam;
 
     }
 
@@ -72,11 +81,8 @@ public class CorleyGame : Game {
         // Make sure we don't try and draw before content has finished loading.
         if (_spriteBatch == null) return;
 
-        _spriteBatch.Begin();
-
         // The active scene calls the draw method for any Entities that need it.
         _activeScene.Draw(_spriteBatch);
-        _spriteBatch.End();
 
         base.Draw(gameTime);
 
