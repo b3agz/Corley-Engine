@@ -16,10 +16,10 @@ public class ClickMover(Transform transform, float speed) : IComponent {
 
         MouseState mouse = Mouse.GetState();
 
-        if (mouse.LeftButton == ButtonState.Pressed) {
-            _targetPosition = new Vector2(mouse.X, mouse.Y);
-            _isMoving = true;
-        }
+        if (Input.IsActionTriggered("Primary")) {
+        _targetPosition = Input.CursorPosition;
+        _isMoving = true;
+    }
 
         if (_isMoving) {
             Vector2 direction = _targetPosition - transform.Position;

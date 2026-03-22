@@ -57,6 +57,9 @@ public class CorleyGame : Game {
         // Time always needs updating for all the scripts that use it.
         Time.Update(gameTime);
 
+        // Update the Input class so components get up to date information.
+        Input.Update();
+
         // The active scene's Update function in turn calls Update on all of its entities.
         _activeScene.Update();
 
