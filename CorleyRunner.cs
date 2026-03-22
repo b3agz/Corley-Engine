@@ -43,8 +43,15 @@ public class CorleyGame : Game {
         Entity player = Entity.CreateStageEntity("Player", new(100, 100));
         player.AddComponent(new CharacterController());
         player.AddComponent(new PlayerInput());
+
+        // Load in a placeholder player sprite and set its pivot point to
+        // the centre of the sprite.
         Texture2D playerImage = Content.Load<Texture2D>("PlaceholderMan");
-        player.AddComponent(new SpriteRenderer(playerImage));
+        SpriteRenderer playerRenderer = new(playerImage);
+        playerRenderer.Origin = new(playerImage.Width / 2f, playerImage.Height / 2f);
+        player.AddComponent(playerRenderer);
+
+        // Scale the player transform down because the placeholder sprite is MAHOOSIVE.
         player.Transform.CurrentScale = new Vector2(0.2f, 0.2f);
 
         // Whack a camera on the player so we can see it in action.

@@ -9,9 +9,23 @@ namespace CorleyEngine.Components;
 /// <param name="texture">The Texture2D to be rendered.</param>
 public class SpriteRenderer(Texture2D texture) : IComponent, IDrawableComponent {
 
+    /// <summary>
+    /// The texture that is being rendered as a sprite.
+    /// </summary>
     public Texture2D Texture { get; set; } = texture;
+
+    /// <summary>
+    /// Colour tint to be applied to the sprite.
+    /// </summary>
     public Color Tint { get; set; } = Color.White;
+
+    /// <inheritdoc />
     public int DrawOrder { get; set; } = 0;
+
+    /// <summary>
+    /// The pivot point the sprite being rendered.
+    /// </summary>
+    public Vector2 Origin { get; set; } = Vector2.Zero;
 
     public void Update() {
         // SpriteRenderer doesn't need an Update function but must have one to satisfy IComponent.
@@ -26,7 +40,7 @@ public class SpriteRenderer(Texture2D texture) : IComponent, IDrawableComponent 
             null,
             Tint,
             transform.Rotation,
-            Vector2.Zero,
+            Origin,
             transform.CurrentScale,
             SpriteEffects.None,
             0f
