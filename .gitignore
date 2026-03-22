@@ -1,0 +1,16 @@
+# .NET / MonoGame specific ignores
+[Bb]in/
+[Oo]bj/
+Content/bin/
+Content/obj/
+
+# VS Code specific
+.vscode/
+
+# Visual Studio user-specific files
+*.user
+*.suo
+*.sln.docstates
+
+# Mac system files (if anyone forks your repo on a Mac)
+.DS_Store
