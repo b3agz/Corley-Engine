@@ -41,7 +41,7 @@ public class SpriteRenderer(Texture2D texture) : IComponent, IDrawableComponent 
             Tint,
             transform.Rotation,
             Origin,
-            transform.CurrentScale,
+            transform.Scale,
             SpriteEffects.None,
             0f
         );

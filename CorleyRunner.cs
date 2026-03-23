@@ -59,7 +59,7 @@ public class CorleyGame : Game {
         player.AddComponent(playerRenderer);
 
         // Scale the player transform down because the placeholder sprite is MAHOOSIVE.
-        player.Transform.CurrentScale = new Vector2(0.2f, 0.2f);
+        player.Transform.Scale = new Vector2(0.2f, 0.2f);
 
         // Whack a camera on the player so we can see it in action.
         Camera playerCam = new();

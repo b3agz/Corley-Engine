@@ -22,13 +22,7 @@ public class Transform : IComponent {
     /// The scale of this Transform as it is when brought into the scene (before any
     /// perspective-based modification).
     /// </summary>
-    public Vector2 BaseScale { get; set; } = Vector2.One;
-
-    /// <summary>
-    /// The scale of the Transform as drawn to the screen (considering things like shrinking
-    /// due to "depth" in the scene.)
-    /// </summary>
-    public Vector2 CurrentScale { get; set; } = Vector2.One;
+    public Vector2 Scale { get; set; } = Vector2.One;
 
     /// <summary>
     /// Creates a new Transform at a specific postion.
