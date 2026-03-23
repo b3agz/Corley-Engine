@@ -23,6 +23,10 @@ public class CorleyGame : Game {
         Log.Info("Initialising AssetManager...");
         AssetManager.Initialize(this.Services, "Content");
 
+        // ! This should only be run when the assets are changed in the future editor, it should not
+        // ! be run on initialisation in the actual game.
+        AssetPipeline.SyncAndBuild();
+
         // Make a new scene.
         _activeScene = new Scene();
 
@@ -65,6 +69,8 @@ public class CorleyGame : Game {
         _activeScene.AddEntity(player);
 
         _activeScene.MainCamera = playerCam;
+
+        Log.Info("Content Loading Complete.");
 
     }
 
