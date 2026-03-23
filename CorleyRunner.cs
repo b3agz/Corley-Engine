@@ -18,7 +18,10 @@ public class CorleyGame : Game {
 
     protected override void Initialize() {
 
-        Log.Info("Initialising Engine...");
+        Log.Info("Starting Engine...");
+
+        Log.Info("Initialising AssetManager...");
+        AssetManager.Initialize(this.Services, "Content");
 
         // Make a new scene.
         _activeScene = new Scene();
@@ -34,7 +37,7 @@ public class CorleyGame : Game {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // Temporary background image for camera testing.
-        Texture2D bgImage = Content.Load<Texture2D>("tempbg");
+        Texture2D bgImage = AssetManager.LoadMedia<Texture2D>("tempbg");
         Entity background = Entity.CreateStageEntity("Background", new(-560, -240));
         background.AddComponent(new SpriteRenderer(bgImage));
         _activeScene.AddEntity(background);
@@ -46,7 +49,7 @@ public class CorleyGame : Game {
 
         // Load in a placeholder player sprite and set its pivot point to
         // the centre of the sprite.
-        Texture2D playerImage = Content.Load<Texture2D>("PlaceholderMan");
+        Texture2D playerImage = AssetManager.LoadMedia<Texture2D>("PlaceholderMan");
         SpriteRenderer playerRenderer = new(playerImage);
         playerRenderer.Origin = new(playerImage.Width / 2f, playerImage.Height / 2f);
         player.AddComponent(playerRenderer);
