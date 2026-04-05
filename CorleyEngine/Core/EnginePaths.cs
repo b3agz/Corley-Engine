@@ -12,6 +12,6 @@ public static class EnginePaths {
     /// The name of the folder that compiled assets are stored in. These are the files the engine
     /// actually uses.
     /// </summary>
-    public const string COMPILED_CONTENT_FOLDER_NAME = "Content";
+    public const string CONTENT_FOLDER_NAME = "Content";
 
 }

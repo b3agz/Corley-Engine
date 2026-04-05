@@ -11,6 +11,8 @@ namespace CorleyEngine.Core;
 /// </summary>
 public static class AssetManager {
 
+    private const string INTERNAL_CONTENT_DIRECTORY = "InternalContent";
+
     // Internal engine assets.
     private static ContentManager _engineContent;
 
@@ -24,8 +26,8 @@ public static class AssetManager {
     /// Initialises the AssetManager, must be called before any attempt to load content.
     /// </summary>
     public static void Initialize(IServiceProvider services, string gameDirectory = "Content") {
-        _engineContent = new ContentManager(services, "InternalContent");
-        _gameContent = new ContentManager(services, gameDirectory);
+        _engineContent = new ContentManager(services, INTERNAL_CONTENT_DIRECTORY);
+        _gameContent = new EngineContentManager(services, gameDirectory);
     }
 
     /// <summary>
@@ -49,15 +51,20 @@ public static class AssetManager {
 
         } catch (ContentLoadException) {
 
-            // TODO: Fallback to some kind of default (like Unity's godawful eye-searing pink).
-            Log.Error($"AssetManager Could not find media asset: {assetName}");
+            // TODO: Fallback to some kind of default return (like Unity's godawful eye-searing pink).
+            // Calculate the exact absolute path the engine was trying to read
+            string rootPath = Path.GetFullPath(_gameContent.RootDirectory);
+            string expectedFile = Path.Combine(rootPath, assetName + ".xnb");
+
+            Log.Error($"[AssetManager] Could not find media asset: {assetName} at {expectedFile}");
+
             return default;
 
         }
     }
 
     /// <summary>
-    /// Loads internal engine media.
+    /// Loads internal engine media. This is media that will be present regardless of the game or its conmtent files.
     /// </summary>
     /// <typeparam name="T">The type of media being loaded.</typeparam>
     /// <param name="assetName">The name of the asset, should NOT include filename extensions.</param>
@@ -71,19 +78,21 @@ public static class AssetManager {
         }
         catch (ContentLoadException) {
 
-            Log.Error($"AssetManager Could not find INTERNAL engine asset: {assetName}");
+            Log.Error($"[AssetManager] Could not find INTERNAL engine asset: {assetName}");
             return default;
 
         }
     }
 
     /// <summary>
-    /// Loads raw text/data files directly from the output directory and attempts to parse it
+    /// Loads raw text/data JSON-formatted files directly from the output directory and attempts to parse it.
     /// into <typeparamref name="T"/>.
     /// </summary>
     /// <typeparam name="T">The type of data being loaded.</typeparam>
     /// <param name="fileName">The name of the asset, MUST include filename.</param>
-    /// <returns></returns>
+    /// <remarks>
+    /// Text files are not converted to xnb format like media files.
+    /// </remarks>
     public static T LoadData<T>(string fileName) {
 
         string path = Path.Combine(_gameContent.RootDirectory, fileName);
@@ -96,7 +105,7 @@ public static class AssetManager {
 
             } catch (JsonException ex) {
 
-                Log.Error($"AssetManager Failed to parse JSON in {fileName}: {ex.Message}");
+                Log.Error($"[AssetManager] Failed to parse JSON in {fileName}: {ex.Message}");
                 return default;
 
             }
@@ -113,4 +122,5 @@ public static class AssetManager {
         _gameContent.Unload();
         _loadedMediaCache.Clear();
     }
+
 }

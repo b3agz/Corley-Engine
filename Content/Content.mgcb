@@ -1,8 +1,8 @@
 
 #----------------------------- Global Properties ----------------------------#
 
-/outputDir:bin/$(Platform)
-/intermediateDir:obj/$(Platform)
+/outputDir:bin/$(Platform)/Assets
+/intermediateDir:obj/$(Platform)/Assets
 /platform:DesktopGL
 /config:
 /profile:Reach
@@ -13,7 +13,6 @@
 
 #---------------------------------- Content ---------------------------------#
 
-
 #begin ../Assets/PlaceholderMan.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -21,7 +20,18 @@
 /processorParam:ColorKeyEnabled=True
 /processorParam:GenerateMipmaps=False
 /processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
 /build:../Assets/PlaceholderMan.png
+
+
+
+
+
+
+
+
 
 #begin ../Assets/tempbg.png
 /importer:TextureImporter

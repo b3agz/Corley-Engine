@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using CorleyEngine.Components;
+using System;
+using System.IO;
 
 namespace CorleyEngine.Core;
 
@@ -20,12 +22,19 @@ public class CorleyGame : Game {
 
         Log.Info("Starting Engine...");
 
-        Log.Info("Initialising AssetManager...");
-        AssetManager.Initialize(this.Services, "Content");
+        // Get path to source directory.
+        string runtimeDir = AppDomain.CurrentDomain.BaseDirectory;
+        string projectRoot = Path.GetFullPath(Path.Combine(runtimeDir, @"..\..\..\"));
+
+        // Get path to folder where compiled xnb files live.
+        string compiledAssetsPath = Path.Combine(projectRoot, "Content", "bin", "DesktopGL");
 
         // ! This should only be run when the assets are changed in the future editor, it should not
         // ! be run on initialisation in the actual game.
         AssetPipeline.SyncAndBuild();
+
+        Log.Info("Initialising AssetManager...");
+        AssetManager.Initialize(this.Services, compiledAssetsPath);
 
         // Make a new scene.
         _activeScene = new Scene();
@@ -41,7 +50,7 @@ public class CorleyGame : Game {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         // Temporary background image for camera testing.
-        Texture2D bgImage = AssetManager.LoadMedia<Texture2D>("tempbg");
+        Texture2D bgImage = AssetManager.LoadMedia<Texture2D>("Assets\\tempbg");
         Entity background = Entity.CreateStageEntity("Background", new(-560, -240));
         background.AddComponent(new SpriteRenderer(bgImage));
         _activeScene.AddEntity(background);
@@ -53,7 +62,7 @@ public class CorleyGame : Game {
 
         // Load in a placeholder player sprite and set its pivot point to
         // the centre of the sprite.
-        Texture2D playerImage = AssetManager.LoadMedia<Texture2D>("PlaceholderMan");
+        Texture2D playerImage = AssetManager.LoadMedia<Texture2D>("Assets\\PlaceholderMan");
         SpriteRenderer playerRenderer = new(playerImage);
         playerRenderer.Origin = new(playerImage.Width / 2f, playerImage.Height / 2f);
         player.AddComponent(playerRenderer);
