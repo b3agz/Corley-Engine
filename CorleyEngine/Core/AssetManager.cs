@@ -17,13 +17,13 @@ public static class AssetManager {
     /// <summary>
     /// Initialises the AssetManager, must be called before any attempt to load content.
     /// </summary>
-    public static void Initialise(string assetsPath, GraphicsDevice device) {
+    /// <param name="absoluteAssetPath">The absolute path to the assets folder of the project we are initialising.</param>
+    /// <param name="device">MonoGame graphics device.</param>
+    public static void Initialise(string absoluteAssetPath, GraphicsDevice device) {
 
+        Log.Info("Initialising AssetManager...");
         _graphicsDevice = device;
-
-        // Get the path to the asset folder, create it if it doesn't already exist.
-        _assetsPath = Path.Combine(assetsPath, "Assets");
-        if (!Directory.Exists(_assetsPath)) Directory.CreateDirectory(_assetsPath);
+        _assetsPath = absoluteAssetPath;
 
     }
 

@@ -1,0 +1,96 @@
+using System;
+using System.IO;
+using System.Text.Json;
+
+namespace CorleyEngine.Core;
+
+/// <summary>
+/// Handles loading and saving project information, as well as providing information about the project to
+/// the rest of the engine.
+/// </summary>
+public static class ProjectManager {
+
+    /// <summary>
+    /// The currently loaded game project.
+    /// </summary>
+    public static CorleyProject CurrentProject { get; private set; }
+
+    public static string ProjectRootDirectory { get; private set; }
+
+    /// <summary>
+    /// Loads a .corleyproject file from an absolute path and sets it as the active project.
+    /// </summary>
+    public static void LoadProject(string absoluteFilePath) {
+
+        Log.Info($"Attempting to load project from {absoluteFilePath}...");
+
+        if (!File.Exists(absoluteFilePath)) {
+            throw new FileNotFoundException($"[ProjectManager] Could not find project file at: {absoluteFilePath}");
+        }
+
+        ProjectRootDirectory = Path.GetDirectoryName(absoluteFilePath);
+
+        try {
+
+            string jsonContent = File.ReadAllText(absoluteFilePath);
+            CurrentProject = JsonSerializer.Deserialize<CorleyProject>(jsonContent);
+
+            // Get the absolute path of the project folder, calculated at load time so the project doesn't break if
+            // the user moves their project folder.
+            string projectDirectory = Path.GetDirectoryName(absoluteFilePath);
+
+            // Get the absolute path to the asset folder (should just be ProjectFolder/Assets)
+            CurrentProject.AbsoluteAssetPath = Path.Combine(projectDirectory, CurrentProject.AssetDirectoryName);
+
+            // If the assets folder doesn't exist, we need to make one. This is the only folder the user will
+            // have access to from inside the editor.
+            if (!Directory.Exists(CurrentProject.AbsoluteAssetPath)) {
+                Directory.CreateDirectory(CurrentProject.AbsoluteAssetPath);
+            }
+
+        }
+        catch (JsonException ex) {
+
+            throw new Exception($"[ProjectManager] The .corleyproject file is corrupted or invalid JSON. Error: {ex.Message}");
+
+        }
+    }
+
+    /// <summary>
+    /// Saves the current project state to disk. Operation ensures only one .corleyproject file exists in the project
+    /// folder. If another is present, this method either overwrites it (if it is the same name) or deletes it.
+    /// </summary>
+    public static void SaveProject() {
+
+        if (CurrentProject == null) {
+            throw new InvalidOperationException("[ProjectManager] Cannot save: No active project is loaded.");
+        }
+
+        if (string.IsNullOrWhiteSpace(ProjectRootDirectory)) {
+            throw new InvalidOperationException("[ProjectManager] Cannot save: Project root directory is unknown.");
+        }
+
+        string targetFileName = $"{CurrentProject.ProjectName}.corleyproject";
+        string targetFilePath = Path.Combine(ProjectRootDirectory, targetFileName);
+
+        // Find every .corleyproject file currently sitting in the folder
+        string[] existingProjectFiles = Directory.GetFiles(ProjectRootDirectory, "*.corleyproject");
+
+        // Check each existing .corleyproject file. If it has a different name to the one we're about to
+        // save, delete it.
+        foreach (string file in existingProjectFiles) {
+            if (!file.Equals(targetFilePath, StringComparison.OrdinalIgnoreCase)) {
+                File.Delete(file);
+            }
+        }
+
+        JsonSerializerOptions jsonOptions = new () {
+            WriteIndented = true
+        };
+
+        string jsonContent = JsonSerializer.Serialize(CurrentProject, jsonOptions);
+        File.WriteAllText(targetFilePath, jsonContent);
+
+    }
+
+}

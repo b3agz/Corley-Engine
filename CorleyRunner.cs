@@ -29,7 +29,9 @@ public class CorleyGame : Game {
         // Get path to folder where compiled xnb files live.
         string compiledAssetsPath = Path.Combine(projectRoot, "Content", "bin", "DesktopGL");
 
-        AssetManager.Initialise("PATH_TO_ASSET_FOLDER", GraphicsDevice);
+        ProjectManager.LoadProject(@"G:\Corley Engine\SampleProject\SampleProject.corleyproject");
+
+        AssetManager.Initialise(ProjectManager.CurrentProject.AbsoluteAssetPath, GraphicsDevice);
 
         // Make a new scene.
         _activeScene = new Scene();
