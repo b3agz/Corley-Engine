@@ -21,7 +21,7 @@ public static class AssetManager {
     /// <param name="device">MonoGame graphics device.</param>
     public static void Initialise(string absoluteAssetPath, GraphicsDevice device) {
 
-        Log.Info("Initialising AssetManager...");
+        Log.Info($"Initialising AssetManager for asset location \"{absoluteAssetPath}\"...");
         _graphicsDevice = device;
         _assetsPath = absoluteAssetPath;
 

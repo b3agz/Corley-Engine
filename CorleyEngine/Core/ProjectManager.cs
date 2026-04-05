@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Text.Json;
+using CorleyEngine.IO;
 
 namespace CorleyEngine.Core;
 
@@ -22,38 +23,17 @@ public static class ProjectManager {
     /// </summary>
     public static void LoadProject(string absoluteFilePath) {
 
-        Log.Info($"Attempting to load project from {absoluteFilePath}...");
+        Log.Info($"Attempting to load project from \"{absoluteFilePath}\"...");
 
-        if (!File.Exists(absoluteFilePath)) {
-            throw new FileNotFoundException($"[ProjectManager] Could not find project file at: {absoluteFilePath}");
-        }
+        CurrentProject = DataSerializer.Load<CorleyProject>(absoluteFilePath);
 
         ProjectRootDirectory = Path.GetDirectoryName(absoluteFilePath);
+        CurrentProject.AbsoluteAssetPath = Path.Combine(ProjectRootDirectory, CurrentProject.AssetDirectoryName);
 
-        try {
-
-            string jsonContent = File.ReadAllText(absoluteFilePath);
-            CurrentProject = JsonSerializer.Deserialize<CorleyProject>(jsonContent);
-
-            // Get the absolute path of the project folder, calculated at load time so the project doesn't break if
-            // the user moves their project folder.
-            string projectDirectory = Path.GetDirectoryName(absoluteFilePath);
-
-            // Get the absolute path to the asset folder (should just be ProjectFolder/Assets)
-            CurrentProject.AbsoluteAssetPath = Path.Combine(projectDirectory, CurrentProject.AssetDirectoryName);
-
-            // If the assets folder doesn't exist, we need to make one. This is the only folder the user will
-            // have access to from inside the editor.
-            if (!Directory.Exists(CurrentProject.AbsoluteAssetPath)) {
-                Directory.CreateDirectory(CurrentProject.AbsoluteAssetPath);
-            }
-
+        if (!Directory.Exists(CurrentProject.AbsoluteAssetPath)) {
+            Directory.CreateDirectory(CurrentProject.AbsoluteAssetPath);
         }
-        catch (JsonException ex) {
 
-            throw new Exception($"[ProjectManager] The .corleyproject file is corrupted or invalid JSON. Error: {ex.Message}");
-
-        }
     }
 
     /// <summary>
