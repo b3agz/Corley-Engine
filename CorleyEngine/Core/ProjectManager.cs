@@ -40,6 +40,7 @@ public static class ProjectManager {
     /// Saves the current project state to disk. Operation ensures only one .corleyproject file exists in the project
     /// folder. If another is present, this method either overwrites it (if it is the same name) or deletes it.
     /// </summary>
+    /// <summary>
     public static void SaveProject() {
 
         if (CurrentProject == null) {
@@ -64,13 +65,8 @@ public static class ProjectManager {
             }
         }
 
-        JsonSerializerOptions jsonOptions = new () {
-            WriteIndented = true
-        };
-
-        string jsonContent = JsonSerializer.Serialize(CurrentProject, jsonOptions);
-        File.WriteAllText(targetFilePath, jsonContent);
+        // Delegate the actual serialization and file writing to the DataSerializer
+        DataSerializer.Save(CurrentProject, targetFilePath);
 
     }
-
 }
