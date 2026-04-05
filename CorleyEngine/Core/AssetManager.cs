@@ -1,126 +1,121 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.Json;
-using Microsoft.Xna.Framework.Content;
+using System;
+using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace CorleyEngine.Core;
 
-/// <summary>
-/// Centralized manager for loading both compiled media (.xnb) and raw data (.json).
-/// </summary>
 public static class AssetManager {
 
-    private const string INTERNAL_CONTENT_DIRECTORY = "InternalContent";
+    private static GraphicsDevice _graphicsDevice;
+    private static string _assetsPath;
 
-    // Internal engine assets.
-    private static ContentManager _engineContent;
-
-    // Game assets.
-    private static ContentManager _gameContent;
-
-    // Cache to prevent instances of the same asset being loaded several times.
-    private static Dictionary<string, object> _loadedMediaCache = [];
+    // Simple cache directory to prevent the need to load assets in that we've already loaded.
+    private static readonly Dictionary<string, object> _cache = new();
 
     /// <summary>
     /// Initialises the AssetManager, must be called before any attempt to load content.
     /// </summary>
-    public static void Initialize(IServiceProvider services, string gameDirectory = "Content") {
-        _engineContent = new ContentManager(services, INTERNAL_CONTENT_DIRECTORY);
-        _gameContent = new EngineContentManager(services, gameDirectory);
+    public static void Initialise(string assetsPath, GraphicsDevice device) {
+
+        _graphicsDevice = device;
+
+        // Get the path to the asset folder, create it if it doesn't already exist.
+        _assetsPath = Path.Combine(assetsPath, "Assets");
+        if (!Directory.Exists(_assetsPath)) Directory.CreateDirectory(_assetsPath);
+
     }
 
     /// <summary>
-    /// Loads media (textures, audio, fonts) using MonoGame's pipeline.
+    /// Attempts to get an asset from the assets folder.
     /// </summary>
-    /// <typeparam name="T">The type of media being loaded.</typeparam>
-    /// <param name="assetName">The name of the asset, should NOT include filename extensions.</param>
-    /// <returns>Returns an object of type <typeparamref name="T"/>, returns default if asset was not found.</returns>
-    public static T LoadMedia<T>(string assetName) {
+    /// <typeparam name="T">The type of asset we expect to get.</typeparam>
+    /// <param name="relativePath">The relative path to the asset.</param>
+    /// <returns>An asset of type <typeparamref name="T"/>.</returns>
+    /// <exception cref="FileNotFoundException">Throws exception if the requested file was not present at the expected location.</exception>
+    /// <exception cref="NotSupportedException">Throws exception if the requested file was not of the expected Type.</exception>
+    public static T Get<T>(string relativePath) where T : class {
 
-        // Check the cache to make sure we haven't already loaded this asset.
-        if (_loadedMediaCache.TryGetValue(assetName, out object cachedAsset))
-            return (T)cachedAsset;
+        // If we already loaded the asset file, we can just get it from the cache.
+        if (_cache.TryGetValue(relativePath, out var asset))
+            return (T)asset;
 
-        // Try and load the asset via MonoGame's pipeline. If found, cache it and return it.
+        // Construct the full path to the asset.
+        string fullPath = Path.Combine(_assetsPath, relativePath);
+
+        if (!File.Exists(fullPath)) {
+            throw new FileNotFoundException($"[AssetManager] User missing asset: {fullPath}");
+        }
+
+        object loadedAsset = null;
+
+        // Text files do not need processing, we can just return the contents of the file.
+        if (typeof(T) == typeof(string)) {
+            loadedAsset = File.ReadAllText(fullPath);
+            _cache[relativePath] = loadedAsset;
+            return (T)loadedAsset;
+        }
+
+        using var stream = File.OpenRead(fullPath);
+
+        // Try to get the asset file. Use try/catch so we can report our own error messages rather than
+        // pipe MonoGame's out to the user.
         try {
 
-            T asset = _gameContent.Load<T>(assetName);
-            _loadedMediaCache.Add(assetName, asset);
-            return asset;
+            if (typeof(T) == typeof(Texture2D)) {
 
-        } catch (ContentLoadException) {
-
-            // TODO: Fallback to some kind of default return (like Unity's godawful eye-searing pink).
-            // Calculate the exact absolute path the engine was trying to read
-            string rootPath = Path.GetFullPath(_gameContent.RootDirectory);
-            string expectedFile = Path.Combine(rootPath, assetName + ".xnb");
-
-            Log.Error($"[AssetManager] Could not find media asset: {assetName} at {expectedFile}");
-
-            return default;
-
-        }
-    }
-
-    /// <summary>
-    /// Loads internal engine media. This is media that will be present regardless of the game or its conmtent files.
-    /// </summary>
-    /// <typeparam name="T">The type of media being loaded.</typeparam>
-    /// <param name="assetName">The name of the asset, should NOT include filename extensions.</param>
-    /// <returns>Returns an object of type <typeparamref name="T"/>, returns default if asset was not found.</returns>
-    public static T LoadEngineMedia<T>(string assetName) {
-
-        try {
-
-            return _engineContent.Load<T>(assetName);
-
-        }
-        catch (ContentLoadException) {
-
-            Log.Error($"[AssetManager] Could not find INTERNAL engine asset: {assetName}");
-            return default;
-
-        }
-    }
-
-    /// <summary>
-    /// Loads raw text/data JSON-formatted files directly from the output directory and attempts to parse it.
-    /// into <typeparamref name="T"/>.
-    /// </summary>
-    /// <typeparam name="T">The type of data being loaded.</typeparam>
-    /// <param name="fileName">The name of the asset, MUST include filename.</param>
-    /// <remarks>
-    /// Text files are not converted to xnb format like media files.
-    /// </remarks>
-    public static T LoadData<T>(string fileName) {
-
-        string path = Path.Combine(_gameContent.RootDirectory, fileName);
-
-        if (File.Exists(path)) {
-            try {
-
-                string jsonText = File.ReadAllText(path);
-                return JsonSerializer.Deserialize<T>(jsonText);
-
-            } catch (JsonException ex) {
-
-                Log.Error($"[AssetManager] Failed to parse JSON in {fileName}: {ex.Message}");
-                return default;
+                loadedAsset = Texture2D.FromStream(_graphicsDevice, stream);
 
             }
+            else if (typeof(T) == typeof(SoundEffect)) {
+
+                loadedAsset = SoundEffect.FromStream(stream);
+
+            }
+            else {
+
+                throw new NotSupportedException($"[AssetManager] Type {typeof(T)} is not supported for raw loading.");
+
+            }
+
+        }
+        catch (InvalidOperationException ex) {
+
+            throw new Exception($"[AssetManager] The file '{relativePath}' could not be loaded. It may be corrupted or saved in an unsupported format.", ex);
+
+        }
+        catch (ArgumentException ex) {
+
+            throw new Exception($"[AssetManager] The file '{relativePath}' has invalid dimensions or data.", ex);
+
+        }
+        catch (Exception ex) {
+
+            throw new Exception($"[AssetManager] An unexpected error occurred while reading '{relativePath}': {ex.Message}", ex);
+
         }
 
-        Log.Error($"[AssetManager] Could not find data file: {path}");
-        return default;
+        // If we make it past all the error checks, throw the loaded asset into the cache before returning it so we don't have to load it next time.
+        if (loadedAsset != null) {
+            _cache[relativePath] = loadedAsset;
+            return (T)loadedAsset;
+        }
+
+        // TODO: Return some kind of default (eg, Unity's searing pink texture).
+        return null;
+
     }
 
     /// <summary>
-    /// Clears the media cache and unloads the game content (eg, when starting a new project).
+    /// Clears the asset cache.
     /// </summary>
-    public static void UnloadAll() {
-        _gameContent.Unload();
-        _loadedMediaCache.Clear();
-    }
+    public static void Unload() {
 
+        foreach (object asset in _cache.Values) {
+            if (asset is IDisposable disposable) disposable.Dispose();
+        }
+        _cache.Clear();
+
+    }
 }
