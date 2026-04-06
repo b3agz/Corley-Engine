@@ -11,7 +11,7 @@ internal class Program {
     static void Main(string[] args) {
 
         // TODO: Get rid of the fallback string. The engine should be provided a valid project location when launched, but at this stage in development, this is easier.
-        string inputPath = @"G:\Corley Engine\SampleProject\Sample Project.corleyproject";
+        string inputPath = @"F:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject";
 
         if (args.Length > 0) {
             inputPath = args[0];
@@ -68,14 +68,12 @@ internal class Program {
 
             ProjectManager.LoadProject(projectFilePath);
 
-        }
-        catch (JsonException jsonEx) {
+        } catch (JsonException jsonEx) {
 
             ShowLaunchError($"The project file is corrupted or contains invalid JSON.\nPath: {projectFilePath}\nDetails: {jsonEx.Message}");
             return;
 
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
 
             ShowLaunchError($"An unexpected error occurred while loading the project file.\nPath: {projectFilePath}\nDetails: {ex.Message}");
             return;
