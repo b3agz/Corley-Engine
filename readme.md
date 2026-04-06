@@ -27,3 +27,6 @@ Currently, the core ECS and serialisation pipelines are functioning, and develop
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
+
+## Third-Party Assets
+- **MPLUS1 Font**: Licensed under SIL Open Font License 1.1. (Included in CorleyEngine.Editor/Fonts/Roboto/)

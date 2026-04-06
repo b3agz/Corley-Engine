@@ -31,4 +31,9 @@
   <ItemGroup>
     <ProjectReference Include="..\CorleyEngine\CorleyEngine.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <None Update="Fonts\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
 </Project>

@@ -14,7 +14,6 @@ public class CorleyRunner : Game {
     public CorleyRunner() {
 
         _graphics = new GraphicsDeviceManager(this);
-        Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
     }
