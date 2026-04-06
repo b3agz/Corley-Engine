@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using CorleyEngine.Components;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Text.Json.Serialization;
 
 namespace CorleyEngine.Core;
 
@@ -23,14 +24,24 @@ public class Entity(string name) {
     /// <summary>
     /// Returns true if the Entity is physically in the scene (ie, has a <see cref="Components.Transform"/>).
     /// </summary>
+    [JsonIgnore]
     public bool IsOnStage => _transform != null;
 
     /// <summary>
     /// Returns true if the Entity is not physically in the scene (ie, does NOT have a <see cref="Components.Transform"/>).
     /// </summary>
+    [JsonIgnore]
     public bool IsDirector => _transform == null;
 
     // A list of all of the components attached to this Entity.
+    [JsonInclude]
+    [JsonPropertyName("Components")]
+    public List<IComponent> Components {
+        get => _components;
+        private set => _components = value ?? new List<IComponent>();
+    }
+
+    // This stays completely hidden from the serializer now
     private List<IComponent> _components = [];
 
     /// Returns the attached Transform". Null if Entity is a Director. Because the presence (or not)
@@ -38,6 +49,7 @@ public class Entity(string name) {
     /// it removes the need to check the component list every time.
     private Transform _transform;
 
+    [JsonIgnore]
     public Transform Transform => _transform;
 
     /// <summary>
@@ -128,6 +140,24 @@ public class Entity(string name) {
 
             // TODO: Separate IDrawableComponents into a separate list so we don't have to check every component.
 
+        }
+    }
+
+    /// <summary>
+    /// Called by the engine immediately after this Entity is loaded from a JSON file.
+    /// Re-establishes parent references, caches the transform, and triggers Awake().
+    /// </summary>
+    public void OnAfterDeserialize() {
+
+        foreach (IComponent component in _components) {
+
+            if (component is Transform t) {
+                _transform = t;
+            }
+            else if (component is Component c) {
+                c.Entity = this;
+                c.Awake();
+            }
         }
     }
 }

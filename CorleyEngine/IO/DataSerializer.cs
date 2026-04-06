@@ -11,7 +11,9 @@ public static class DataSerializer {
 
     // Centralised JSON options so all JSON files the engine stores are formatted the same.
     private static readonly JsonSerializerOptions _options = new() {
-        WriteIndented = true
+        WriteIndented = true,
+        IncludeFields = true,
+        Converters = { new ComponentConverter() }
     };
 
     /// <summary>

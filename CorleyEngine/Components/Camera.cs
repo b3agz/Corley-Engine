@@ -13,6 +13,8 @@ public class Camera : Component {
 
     public override void Awake() {
         MainCamera = this;
+        // TODO: Some kind of camera management system to handle multiple cameras.
+        // Right now, the most recently added camera becomes the main camera regardless.
     }
 
     /// <summary>

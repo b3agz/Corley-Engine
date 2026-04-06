@@ -1,4 +1,5 @@
 using CorleyEngine.Core;
+using System.Text.Json.Serialization;
 
 namespace CorleyEngine.Components;
 
@@ -12,11 +13,13 @@ public abstract class Component : IComponent {
     /// The Entity this component is currently attached to.
     /// </summary>
     /// <remarks>The setter is internal so only the Entity can assign this.</remarks>
+    [JsonIgnore]
     public Entity Entity { get; internal set; }
 
     /// <summary>
     /// Access to the <see cref="Entity"/>'s transform. Can be null (if the Entity is a Director).
     /// </summary>
+    [JsonIgnore]
     public Transform Transform => Entity?.Transform;
 
     /// <summary>
@@ -28,6 +31,8 @@ public abstract class Component : IComponent {
     /// Logic to run every frame.
     /// </summary>
     public virtual void Update() { }
+
+    public virtual void OnChange() { }
 
     /// <summary>
     /// Satisfies IComponnent without hiding the Update method from the user.

@@ -39,7 +39,13 @@ public class Transform : IComponent {
     }
 
     /// <inheritdoc />
-    void IComponent.Update() {
-    }
+    void IComponent.Awake() { }
+
+    /// <inheritdoc />
+    void IComponent.Update() { }
+
+    /// <inheritdoc />
+    public void OnChange() { }
+
 }
 

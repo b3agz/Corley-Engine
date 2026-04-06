@@ -10,12 +10,33 @@ namespace CorleyEngine.Core;
 /// </summary>
 public class Scene {
 
+    /// <summary>
+    /// The runtime scene holds the pure data and reads the information from there.
+    /// </summary>
+    public SceneData Data { get; private set; }
+
     private readonly List<Entity> _entities = [];
 
     /// <summary>
     /// The camera that is currently viewing this scene.
     /// </summary>
     public Camera MainCamera { get; set; }
+
+    /// <summary>
+    /// Binds the raw scene data to this runtime scene instance.
+    /// </summary>
+    public void Initialize(SceneData blueprint) {
+
+        Data = blueprint;
+
+        foreach (Entity loadedEntity in blueprint.Entities) {
+
+            loadedEntity.OnAfterDeserialize();
+            AddEntity(loadedEntity);
+
+        }
+    }
+
 
     /// <summary>
     /// Adds an Entity to the scene.
@@ -51,7 +72,7 @@ public class Scene {
     public void Draw(SpriteBatch spriteBatch) {
 
         // 1. Get the camera's matrix (or use Identity if no camera exists, which means no offset)
-        Matrix viewMatrix = MainCamera != null ? MainCamera.GetViewMatrix() : Matrix.Identity;
+        Matrix viewMatrix = Camera.MainCamera != null ? Camera.MainCamera.GetViewMatrix() : Matrix.Identity;
 
         // 2. Begin the batch using the camera's illusion!
         // Note: SpriteSortMode.Deferred and BlendState.AlphaBlend are MonoGame defaults.

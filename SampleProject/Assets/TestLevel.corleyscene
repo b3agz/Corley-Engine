@@ -1,0 +1,83 @@
+{
+  "Name": "TestLevel",
+  "Entities": [
+    {
+      "Id": 0,
+      "Name": "Background",
+      "Components": [
+        {
+          "$type": "Transform",
+          "Position": {
+            "X": 0,
+            "Y": 0
+          },
+          "Rotation": 0,
+          "Scale": {
+            "X": 1,
+            "Y": 1
+          }
+        },
+        {
+          "$type": "SpriteRenderer",
+          "TexturePath": "tempbg.png",
+          "Tint": {
+            "B": 255,
+            "G": 255,
+            "R": 255,
+            "A": 255,
+            "PackedValue": 4294967295
+          },
+          "DrawOrder": 0,
+          "Origin": {
+            "X": 960,
+            "Y": 654
+          }
+        }
+      ]
+    },
+    {
+      "Id": 1,
+      "Name": "Player",
+      "Components": [
+        {
+          "$type": "Transform",
+          "Position": {
+            "X": 100,
+            "Y": 100
+          },
+          "Rotation": 0,
+          "Scale": {
+            "X": 0.2,
+            "Y": 0.2
+          }
+        },
+        {
+          "$type": "CharacterController",
+          "MoveSpeed": 200
+        },
+        {
+          "$type": "PlayerInput"
+        },
+        {
+          "$type": "SpriteRenderer",
+          "TexturePath": "PlaceholderMan.png",
+          "Tint": {
+            "B": 255,
+            "G": 255,
+            "R": 255,
+            "A": 255,
+            "PackedValue": 4294967295
+          },
+          "DrawOrder": 0,
+          "Origin": {
+            "X": 160,
+            "Y": 320
+          }
+        },
+        {
+          "$type": "Camera"
+        }
+      ]
+    }
+  ]
+}
