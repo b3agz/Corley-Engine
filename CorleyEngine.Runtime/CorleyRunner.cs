@@ -6,7 +6,7 @@ using System.IO;
 
 namespace CorleyEngine.Core;
 
-public class CorleyRunner : Game {
+public class CorleyRunner : CorleyGame {
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -59,16 +59,15 @@ public class CorleyRunner : Game {
 
     protected override void Draw(GameTime gameTime) {
 
-        // TODO: Let scene handle this? At least get the information from the active scene.
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-
-        // Make sure we don't try and draw before content has finished loading.
-        if (_spriteBatch == null) return;
-
-        // The active scene calls the draw method for any Entities that need it.
-        SceneManager.ActiveScene?.Draw(_spriteBatch);
-
         base.Draw(gameTime);
+
+        // TODO: Compensate for canvas when getting mouseclick position.
+
+        _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
+        _spriteBatch.Draw(_gameCanvas, GraphicsDevice.Viewport.Bounds, Color.White);
+        _spriteBatch.End();
+
+        //base.Draw(gameTime);
 
     }
 }

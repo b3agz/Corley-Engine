@@ -9,7 +9,7 @@ using System.Runtime.CompilerServices;
 
 namespace CorleyEngine.Editor;
 
-public class CorleyEditor : Game {
+public class CorleyEditor : CorleyGame {
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -26,8 +26,8 @@ public class CorleyEditor : Game {
         IsMouseVisible = true;
 
         // TODO: Store previous window size and re-use it.
-        _graphics.PreferredBackBufferWidth = 1280;
-        _graphics.PreferredBackBufferHeight = 720;
+        _graphics.PreferredBackBufferWidth = 1440;
+        _graphics.PreferredBackBufferHeight = 810;
 
     }
 
@@ -58,13 +58,16 @@ public class CorleyEditor : Game {
 
             _imGuiRenderer.RebuildFontAtlas();
 
+            // ! Temporary project load for testing.
+            ProjectManager.LoadProject(@"G:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
+            AssetManager.Initialise(@"G:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
+
+
             base.Initialize();
             Console.WriteLine("=== INITIALIZATION COMPLETE ===");
         }
         catch (Exception ex) {
             Console.WriteLine($"Critical Error: {ex.Message}");
-            Console.WriteLine("Press any key to exit...");
-            Console.ReadKey();
         }
 
     }
@@ -73,25 +76,43 @@ public class CorleyEditor : Game {
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+        // ! Temporary project load for testing.
+        SceneManager.LoadScene("TestLevel");
+
     }
 
     protected override void Update(GameTime gameTime) {
 
-        // Unlike the runtime class, we don't call Update on any entities in the editor.
+        // TODO: If PlayMode, Play.
+        // Time.Update(gameTime);
+        // Input.Update();
+        // SceneManager.ActiveScene?.Update();
+
         base.Update(gameTime);
 
     }
 
     protected override void Draw(GameTime gameTime) {
 
-        GraphicsDevice.Clear(Color.CornflowerBlue);
-
-        // If we have an active scene, draw it.
-        SceneManager.ActiveScene?.Draw(_spriteBatch);
-
         _imGuiRenderer.BeforeLayout(gameTime);
 
-        // Placeholder/Test UI Stuff
+        // Draw the Game View window.
+        ImGui.Begin("Game View", ImGuiWindowFlags.NoScrollbar);
+
+        // Set the size of the Game View and resize the canvas if necessary.
+        System.Numerics.Vector2 size = ImGui.GetContentRegionAvail();
+        int newWidth = (int)size.X;
+        int newHeight = (int)size.Y;
+        BuildCanvas(newWidth, newHeight);
+
+        // Draw the game logic here. If we do it up top, the game view flickers when the
+        // camera moves. If we do it at the end, we get a black screen with no UI.
+        base.Draw(gameTime);
+
+        ImGui.Image(_imGuiRenderer.BindTexture(_gameCanvas), size);
+        ImGui.End();
+
+        // Top bar/drop down menus.
         if (ImGui.BeginMainMenuBar()) {
             if (ImGui.BeginMenu("File")) {
                 if (ImGui.MenuItem("Save Scene", "Ctrl+S")) { /* Save Logic */ }
@@ -109,23 +130,18 @@ public class CorleyEditor : Game {
         ImGui.Begin("Engine Status");
         ImGui.Text("Corley Editor is online.");
         ImGui.Separator();
-
-        // FPS display
         ImGui.Text($"FPS: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds:0.0}");
         ImGui.Text($"Uptime: {gameTime.TotalGameTime.TotalSeconds:0.0}s");
-
         ImGui.Spacing();
         ImGui.TextColored(new System.Numerics.Vector4(1, 0.8f, 0.2f, 1), "No Project Loaded");
-
         ImGui.End();
 
-        ImGui.Begin("Style Editor");
-        ImGui.ShowStyleEditor(); // This is the gold mine
-        ImGui.End();
+        // Built-in settings tool that lets me play with the UI style in realtime.
+        // ImGui.Begin("Style Editor");
+        // ImGui.ShowStyleEditor(); // This is the gold mine
+        // ImGui.End();
 
         _imGuiRenderer.AfterLayout();
-
-        base.Draw(gameTime);
 
     }
 
