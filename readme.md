@@ -1,21 +1,29 @@
 # Corley Engine
-A custom C# game engine built on top of the [MonoGame](https://monogame.net/) framework. The engine is intended to be a speciialist "point 'n' click adventure" engine, along the lines of [Adventure Game Studio](https://www.adventuregamestudio.co.uk/).
+A custom C# game engine built on top of the [MonoGame](https://monogame.net/) framework. The engine is intended to be a speciialist "point 'n' click adventure" engine, it aims to provide a modern, code-clean alternative to classic toolsets like [Adventure Game Studio](https://www.adventuregamestudio.co.uk/).
 
-The purpose of this project is part educational (I am studying for a BSc in Game Programming), and part for the experience.
+Named after the motorcycle company in the classic LucasArts adventure [Full Throttle](https://en.wikipedia.org/wiki/Full_Throttle_(1995_video_game))), the engine is currently in active development alongside my BSc in Games Programming. It serves as both a passion project for the genre and a practical sandbox for exploring advanced engine architecture, tool development, and data-driven design.
 
-Not to mention I just like point 'n' click adventures.
+## Technical Architecture
+Corley Engine is built top-to-bottom in C# and is structured to strictly separate runtime execution from the editor environment.
 
-## Architecture
-The engine uses an Entity-Component-System (ECS) similar to engines like [Unity](https://unity.com/) and [Godot](https://godotengine.org/), and will endeavour to stick to clean code and good practice as much as I am capable of (I am a student, after all!).
+- **Entity-Component-System (ECS)**: The engine utilises a highly decoupled ECS architecture inspired by modern game engines like [Unity](https://unity.com/) and [Godot](https://godotengine.org/), allowing for modular game logic and clean memory management.
 
-The engine is built in C#, with the intention to be C# top-to-bottom.
+- **Data-Driven Scene Loading**: The engine relies on a custom System.Text.Json serialization pipeline. Scenes and entities are not hardcoded; they are stored as JSON data, parsed at runtime via reflection, and hot-loaded into active memory.
 
-## The Plan
-I hope to make Corley Engine (named for the motorcycle company in the amazing point 'n' click game, [Full Throttle](https://en.wikipedia.org/wiki/Full_Throttle_(1995_video_game))) into a complete engine and editor, with a full user interace and tools for building PnC games.
+**Asset Management**: Corley Engine uses a centralised asset pipeline that handles texture hot-swapping and memory pooling, keeping the rendering loop fast and safe.
 
-The current plan is to utilise a wrapper system, where the game engine is precompiled and "empty", and loads the information dynamically from a contents folder. The toolkit would create that contents folder and package it up with the precompiled engine.
+## The Roadmap
+The ultimate goal for Corley Engine is to develop a complete, standalone editor toolkit alongside the runtime environment.
 
-It is very early days, however.
+The planned architecture utilises a "wrapper" system:
+
+- **The Runtime**: A precompiled, lightweight executable that contains zero hardcoded game logic.
+
+- **The Toolkit**: A dedicated UI application used to create the project files that the runtime executable will load in. The editor will also be created in this manner; as a content package for the runtime executable. This ensures the editor and game do not need separate development, since they use the exact same executable.
+
+- **The Pipeline**: The toolkit packages the user-generated JSON data and assets, dropping them into the runtime's directory to produce a shippable game.
+
+Currently, the core ECS and serialisation pipelines are functioning, and development is moving toward the graphical editor interface.
 
 ## License
 This project is licensed under the [MIT License](LICENSE).
