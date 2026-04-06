@@ -6,35 +6,24 @@ using System.IO;
 
 namespace CorleyEngine.Core;
 
-public class CorleyGame : Game {
+public class CorleyRunner : Game {
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
-    private Scene _activeScene;
 
-    public CorleyGame() {
+    public CorleyRunner() {
+
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
     }
 
     protected override void Initialize() {
 
         Log.Info("Starting Engine...");
 
-        // Get path to source directory.
-        string runtimeDir = AppDomain.CurrentDomain.BaseDirectory;
-        string projectRoot = Path.GetFullPath(Path.Combine(runtimeDir, @"..\..\..\"));
-
-        // Get path to folder where compiled xnb files live.
-        string compiledAssetsPath = Path.Combine(projectRoot, "Content", "bin", "DesktopGL");
-
-        ProjectManager.LoadProject(@"G:\Corley Engine\SampleProject\Sample Project.corleyproject");
-
         AssetManager.Initialise(ProjectManager.CurrentProject.AbsoluteAssetPath, GraphicsDevice);
-
-        // Make a new scene.
-        _activeScene = new Scene();
 
         base.Initialize();
 
@@ -51,45 +40,6 @@ public class CorleyGame : Game {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
         SceneManager.LoadScene("TestLevel");
-
-        // SceneManager.CreateScene("TestLevel");
-        // SceneManager.LoadScene("TestLevel");
-        // SceneData blueprint = SceneManager.ActiveScene.Data;
-
-
-        // // Temporary background image for camera testing.
-        // Texture2D bgImage = AssetManager.Get<Texture2D>("tempbg.png");
-        // Entity background = Entity.CreateStageEntity("Background", new());
-        // background.AddComponent(new SpriteRenderer("tempbg.png"));
-        // _activeScene.AddEntity(background);
-
-        // // Create a moveable "player" for testing.
-        // Entity player = Entity.CreateStageEntity("Player", new(100, 100));
-        // player.AddComponent(new CharacterController());
-        // player.AddComponent(new PlayerInput());
-
-        // // Load in a placeholder player sprite and set its pivot point to
-        // // the centre of the sprite.
-        // //Texture2D playerImage = AssetManager.Get<Texture2D>("PlaceholderMan.png");
-        // SpriteRenderer playerRenderer = new("PlaceholderMan.png");
-        // //playerRenderer.Origin = new(playerImage.Width / 2f, playerImage.Height / 2f);
-        // player.AddComponent(playerRenderer);
-
-        // // Scale the player transform down because the placeholder sprite is MAHOOSIVE.
-        // player.Transform.Scale = new Vector2(0.2f, 0.2f);
-
-        // // Whack a camera on the player so we can see it in action.
-        // Camera playerCam = new();
-        // player.AddComponent(playerCam);
-
-        // // Add the "player" to the scene.
-        // _activeScene.AddEntity(player);
-
-        // _activeScene.MainCamera = playerCam;
-
-        // blueprint.Entities.Add(background);
-        // blueprint.Entities.Add(player);
-        // SceneManager.SaveScene();
 
     }
 
