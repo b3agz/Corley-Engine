@@ -59,8 +59,8 @@ public class CorleyEditor : CorleyGame {
             _imGuiRenderer.RebuildFontAtlas();
 
             // ! Temporary project load for testing.
-            ProjectManager.LoadProject(@"G:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
-            AssetManager.Initialise(@"G:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
+            ProjectManager.LoadProject(@"F:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
+            AssetManager.Initialise(@"F:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
 
 
             base.Initialize();
@@ -104,6 +104,14 @@ public class CorleyEditor : CorleyGame {
         int newWidth = (int)size.X;
         int newHeight = (int)size.Y;
         BuildCanvas(newWidth, newHeight);
+
+        // Update Input so it registers the mouse position correctly.
+        var contentPos = ImGui.GetCursorScreenPos();
+        var contentSize = ImGui.GetContentRegionAvail();
+
+        Input.ViewportOffset = new Vector2(contentPos.X, contentPos.Y);
+        Input.ViewportDisplaySize = new Vector2(contentSize.X, contentSize.Y);
+        Input.ViewportScale = new Vector2((float)RenderWidth / contentSize.X, (float)RenderHeight / contentSize.Y);
 
         // Draw the game logic here. If we do it up top, the game view flickers when the
         // camera moves. If we do it at the end, we get a black screen with no UI.

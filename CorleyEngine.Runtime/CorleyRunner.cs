@@ -47,6 +47,11 @@ public class CorleyRunner : CorleyGame {
         // Time always needs updating for all the scripts that use it.
         Time.Update(gameTime);
 
+        // Update Input so mouse position is accurately reported.
+        Input.ViewportOffset = Vector2.Zero;
+        Input.ViewportDisplaySize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
+        Input.ViewportScale = new Vector2((float)RenderWidth / Input.ViewportDisplaySize.X, (float)RenderHeight / Input.ViewportDisplaySize.Y);
+
         // Update the Input class so components get up to date information.
         Input.Update();
 

@@ -11,7 +11,7 @@ internal class Program {
     static void Main(string[] args) {
 
         // TODO: Get rid of the fallback string. The engine should be provided a valid project location when launched, but at this stage in development, this is easier.
-        string inputPath = @"G:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject";
+        string inputPath = @"F:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject";
 
         if (args.Length > 0) {
             inputPath = args[0];
