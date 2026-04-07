@@ -8,7 +8,7 @@ namespace CorleyEngine.Core;
 /// </summary>
 public abstract class CorleyGame : Game {
 
-    protected RenderTarget2D _gameCanvas;
+    public RenderTarget2D GameCanvas;
     protected SpriteBatch _sceneBatch;
 
     public int RenderWidth { get; private set; } = 1920;
@@ -16,7 +16,7 @@ public abstract class CorleyGame : Game {
 
     protected override void Initialize() {
 
-        _gameCanvas = new RenderTarget2D(GraphicsDevice, RenderWidth, RenderHeight);
+        GameCanvas = new RenderTarget2D(GraphicsDevice, RenderWidth, RenderHeight);
         _sceneBatch = new SpriteBatch(GraphicsDevice);
         base.Initialize();
 
@@ -25,7 +25,7 @@ public abstract class CorleyGame : Game {
     protected override void Draw(GameTime gameTime) {
 
         // Tell MonoGame to draw to our internal canvas.
-        GraphicsDevice.SetRenderTarget(_gameCanvas);
+        GraphicsDevice.SetRenderTarget(GameCanvas);
         GraphicsDevice.Clear(Color.Black);
 
         // If we have an active scene, tell it to run its draw function.
@@ -50,14 +50,14 @@ public abstract class CorleyGame : Game {
 
         // If the width and height haven't changed and we already have a canvas, we don't
         // need to do anything.
-        if (width == RenderWidth && height == RenderHeight && _gameCanvas != null) return;
+        if (width == RenderWidth && height == RenderHeight && GameCanvas != null) return;
 
         // Clean up the old one to prevent memory leaks
-        _gameCanvas?.Dispose();
+        GameCanvas?.Dispose();
 
         RenderWidth = width;
         RenderHeight = height;
-        _gameCanvas = new RenderTarget2D(GraphicsDevice, RenderWidth, RenderHeight);
+        GameCanvas = new RenderTarget2D(GraphicsDevice, RenderWidth, RenderHeight);
 
         // Push the new dimensions to the global Screen class
         GameView.UpdateDimensions(width, height);

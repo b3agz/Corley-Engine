@@ -13,10 +13,13 @@ namespace CorleyEngine.Editor;
 public class CorleyEditor : CorleyGame {
 
     private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
 
     private ImGuiRenderer _imGuiRenderer;
     private StatusBar _statusBar;
+    private MainWorkspace _workspace;
+
+    private GameViewWindow _gameView;
+    private SceneViewWindow _sceneView;
 
     private EditorPreferences _preferences;
     private readonly string _prefsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "editor_prefs.json");
@@ -66,7 +69,20 @@ public class CorleyEditor : CorleyGame {
             ProjectManager.LoadProject(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
             AssetManager.Initialise(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
 
+            var io = ImGui.GetIO();
+            io.ConfigWindowsMoveFromTitleBarOnly = true;
+            io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+
             _statusBar = new StatusBar();
+            _workspace = new MainWorkspace();
+
+            // Pass dependencies through constructors
+            _gameView = new GameViewWindow(this, _imGuiRenderer);
+            _sceneView = new SceneViewWindow(GraphicsDevice, _imGuiRenderer);
+
+            // Add to your list of windows to draw later
+            _windows.Add(_gameView);
+            _windows.Add(_sceneView);
 
             base.Initialize();
             Console.WriteLine("=== INITIALIZATION COMPLETE ===");
@@ -86,12 +102,13 @@ public class CorleyEditor : CorleyGame {
 
         InspectorWindow inspector = new();
 
+
         List<Entity> entities = SceneManager.ActiveScene?.GetEntities();
 
         inspector.TargetEntity = entities[0];
 
-        _windows.Add(new StatusWindow());
         _windows.Add(inspector);
+
 
         base.LoadContent();
 
@@ -99,10 +116,15 @@ public class CorleyEditor : CorleyGame {
 
     protected override void Update(GameTime gameTime) {
 
-        // TODO: If PlayMode, Play.
-        // Time.Update(gameTime);
-        // Input.Update();
-        // SceneManager.ActiveScene?.Update();
+        // TODO: By default, Time will operate from when the editor launched. It should run (and reset) when play mode is initiated.
+        Time.Update(gameTime);
+
+        // We want to get the game input regardless. Game input is tied to the game view, and we'll need
+        // relative cursor positions to be able to move objects.
+        Input.Update();
+
+        // TODO: If PlayMode, call update function on the active scene.
+        SceneManager.ActiveScene?.Update();
 
         base.Update(gameTime);
 
@@ -111,6 +133,8 @@ public class CorleyEditor : CorleyGame {
     protected override void Draw(GameTime gameTime) {
 
         _imGuiRenderer.BeforeLayout(gameTime);
+
+        _workspace.Draw();
 
         // Top bar/drop down menus.
         if (ImGui.BeginMainMenuBar()) {
@@ -150,13 +174,18 @@ public class CorleyEditor : CorleyGame {
         // camera moves. If we do it at the end, we get a black screen with no UI.
         base.Draw(gameTime);
 
-        ImGui.Image(_imGuiRenderer.BindTexture(_gameCanvas), size);
+        ImGui.Image(_imGuiRenderer.BindTexture(GameCanvas), size);
         ImGui.End();
+
+        // Render the scene to the sceneview window. Needs to be done
+        _sceneView.RenderSceneToCanvas(_sceneBatch, SceneManager.ActiveScene);
 
         // Loop through any open EditorWindows and draw them.
         foreach (EditorWindow window in _windows) {
             window.Draw(gameTime);
         }
+
+        //DrawSceneView();
 
         _imGuiRenderer.AfterLayout();
 

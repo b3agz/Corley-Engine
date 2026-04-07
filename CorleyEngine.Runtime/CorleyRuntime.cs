@@ -74,7 +74,7 @@ public class CorleyRuntime : CorleyGame {
         base.Draw(gameTime);
 
         _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
-        _spriteBatch.Draw(_gameCanvas, GraphicsDevice.Viewport.Bounds, Color.White);
+        _spriteBatch.Draw(GameCanvas, GraphicsDevice.Viewport.Bounds, Color.White);
         _spriteBatch.End();
 
     }

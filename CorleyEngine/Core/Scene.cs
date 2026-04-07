@@ -69,9 +69,11 @@ public class Scene {
     /// <summary>
     /// Draws every "OnStage" Entity in the scene.
     /// </summary>
-    public void Draw(SpriteBatch spriteBatch) {
+    public void Draw(SpriteBatch spriteBatch, Matrix? customViewMatrix = null) {
 
-        Matrix viewMatrix = Camera.MainCamera != null ? Camera.MainCamera.GetViewMatrix() : Matrix.Identity;
+        // Use the custom matrix if provided. If not, fall back to the MainCamera.
+        Matrix viewMatrix = customViewMatrix ??
+                           (Camera.MainCamera != null ? Camera.MainCamera.GetViewMatrix() : Matrix.Identity);
 
         spriteBatch.Begin(
             SpriteSortMode.Deferred,
