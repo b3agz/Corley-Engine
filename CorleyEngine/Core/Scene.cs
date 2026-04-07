@@ -14,7 +14,8 @@ public class Scene {
     /// </summary>
     public SceneData Data { get; private set; }
 
-    private readonly List<Entity> _entities = [];
+    private List<Entity> _entities = [];
+    public List<Entity> GetEntities() => _entities;
 
     /// <summary>
     /// The camera that is currently viewing this scene.

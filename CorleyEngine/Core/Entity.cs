@@ -22,6 +22,11 @@ public class Entity(string name) {
     public string Name { get; set; } = name;
 
     /// <summary>
+    /// Whether this Entity is currently active in the scene.
+    /// </summary>
+    public bool IsActive { get; set; } = true;
+
+    /// <summary>
     /// Returns true if the Entity is physically in the scene (ie, has a <see cref="Components.Transform"/>).
     /// </summary>
     [JsonIgnore]

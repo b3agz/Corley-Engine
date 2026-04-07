@@ -16,6 +16,7 @@ public class CorleyEditor : CorleyGame {
     private SpriteBatch _spriteBatch;
 
     private ImGuiRenderer _imGuiRenderer;
+    private StatusBar _statusBar;
 
     private EditorPreferences _preferences;
     private readonly string _prefsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "editor_prefs.json");
@@ -65,6 +66,7 @@ public class CorleyEditor : CorleyGame {
             ProjectManager.LoadProject(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
             AssetManager.Initialise(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
 
+            _statusBar = new StatusBar();
 
             base.Initialize();
             Console.WriteLine("=== INITIALIZATION COMPLETE ===");
@@ -82,7 +84,14 @@ public class CorleyEditor : CorleyGame {
 
         SetWindowTitle("Corley Engine Editor v0.1.0");
 
+        InspectorWindow inspector = new();
+
+        List<Entity> entities = SceneManager.ActiveScene?.GetEntities();
+
+        inspector.TargetEntity = entities[0];
+
         _windows.Add(new StatusWindow());
+        _windows.Add(inspector);
 
         base.LoadContent();
 
@@ -116,6 +125,9 @@ public class CorleyEditor : CorleyGame {
             }
             ImGui.EndMainMenuBar();
         }
+
+        _statusBar.RightMessage = $"FPS: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds:0} | Corley Engine";
+        _statusBar.Draw();
 
         // Draw the Game View window.
         ImGui.Begin("Game View", ImGuiWindowFlags.NoScrollbar);
