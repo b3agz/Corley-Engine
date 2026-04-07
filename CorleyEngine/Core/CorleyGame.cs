@@ -59,6 +59,17 @@ public abstract class CorleyGame : Game {
         RenderHeight = height;
         _gameCanvas = new RenderTarget2D(GraphicsDevice, RenderWidth, RenderHeight);
 
+        // Push the new dimensions to the global Screen class
+        GameView.UpdateDimensions(width, height);
+
+    }
+
+    /// <summary>
+    /// Sets the title of the game window.
+    /// </summary>
+    /// <param name="title">String containing the game title.</param>
+    public virtual void SetWindowTitle(string title = "Corley Engine") {
+        Window.Title = title;
     }
 
 }

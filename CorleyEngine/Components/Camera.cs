@@ -7,9 +7,7 @@ public class Camera : Component {
 
     public static Camera MainCamera;
 
-    // You'll eventually want to read this from your Engine setup,
-    // but we'll hardcode a standard 800x600 window for the skeleton.
-    private readonly Vector2 _screenCenter = new Vector2(400, 300);
+    public float Zoom = 1f;
 
     public override void Awake() {
         MainCamera = this;
@@ -30,20 +28,32 @@ public class Camera : Component {
 
     }
 
+    /// <summary>
+    /// Calculates the view matrix for this camera.
+    /// </summary>
+    /// <returns>The view matrix.</returns>
     public Matrix GetViewMatrix() {
-        if (Transform == null) return Matrix.Identity;
 
-        // Step 1: Move the universe in the OPPOSITE direction of the camera
+        Vector2 center = GameView.Center;
+
+        // Combine the engine's scale factor with the camera's zoom factor.
+        float finalZoom = (Zoom == 0f ? 1f : Zoom) * GameView.ScaleFactor;
+
+        // Centre on the camera transform.
         Matrix positionOffset = Matrix.CreateTranslation(
             new Vector3(-Transform.Position.X, -Transform.Position.Y, 0));
 
-        // Step 2: Push everything so the camera's coordinates are in the dead center of the screen,
-        // rather than the top-left corner.
-        Matrix centerOffset = Matrix.CreateTranslation(
-            new Vector3(_screenCenter.X, _screenCenter.Y, 0));
+        // Scale the game world according to the finalZoom value.
+        Matrix scaleOffset = Matrix.CreateScale(
+            new Vector3(finalZoom, finalZoom, 1f));
 
-        // Step 3: Combine them (Order matters in matrix math!)
-        return positionOffset * centerOffset;
+        // Move everything so that the centre of the view is still centred after all the
+        // modifications.
+        Matrix centerOffset = Matrix.CreateTranslation(
+            new Vector3(center.X, center.Y, 0));
+
+        return positionOffset * scaleOffset * centerOffset;
 
     }
+
 }

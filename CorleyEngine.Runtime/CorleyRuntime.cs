@@ -6,12 +6,12 @@ using System.IO;
 
 namespace CorleyEngine.Core;
 
-public class CorleyRunner : CorleyGame {
+public class CorleyRuntime : CorleyGame {
 
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    public CorleyRunner() {
+    public CorleyRuntime() {
 
         _graphics = new GraphicsDeviceManager(this);
         IsMouseVisible = true;
@@ -40,6 +40,10 @@ public class CorleyRunner : CorleyGame {
 
         SceneManager.LoadScene("TestLevel");
 
+        SetWindowTitle("Corley Engine v0.1.0");
+
+        base.LoadContent();
+
     }
 
     protected override void Update(GameTime gameTime) {
@@ -47,10 +51,13 @@ public class CorleyRunner : CorleyGame {
         // Time always needs updating for all the scripts that use it.
         Time.Update(gameTime);
 
-        // Update Input so mouse position is accurately reported.
+        // Update canvas and input so that camera renders properly and mouse cursor position is
+        // reported accurately.
+        Viewport viewport = GraphicsDevice.Viewport;
+        BuildCanvas(viewport.Width, viewport.Height);
         Input.ViewportOffset = Vector2.Zero;
-        Input.ViewportDisplaySize = new Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height);
-        Input.ViewportScale = new Vector2((float)RenderWidth / Input.ViewportDisplaySize.X, (float)RenderHeight / Input.ViewportDisplaySize.Y);
+        Input.ViewportDisplaySize = new Vector2(viewport.Width, viewport.Height);
+        Input.ViewportScale = Vector2.One;
 
         // Update the Input class so components get up to date information.
         Input.Update();
@@ -66,13 +73,10 @@ public class CorleyRunner : CorleyGame {
 
         base.Draw(gameTime);
 
-        // TODO: Compensate for canvas when getting mouseclick position.
-
         _spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Opaque);
         _spriteBatch.Draw(_gameCanvas, GraphicsDevice.Viewport.Bounds, Color.White);
         _spriteBatch.End();
 
-        //base.Draw(gameTime);
-
     }
+
 }

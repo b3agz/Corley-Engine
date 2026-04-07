@@ -43,7 +43,7 @@ public class CorleyEditor : CorleyGame {
 
             _imGuiRenderer = new ImGuiRenderer(this);
 
-            ApplyStyle();
+            _preferences.ApplyTo(ImGui.GetStyle());
 
             string absoluteFontPath = GetFontPath(_preferences.FontPath);
             Console.WriteLine($"[Editor] Searching for font at: {absoluteFontPath}");
@@ -59,8 +59,8 @@ public class CorleyEditor : CorleyGame {
             _imGuiRenderer.RebuildFontAtlas();
 
             // ! Temporary project load for testing.
-            ProjectManager.LoadProject(@"F:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
-            AssetManager.Initialise(@"F:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
+            ProjectManager.LoadProject(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
+            AssetManager.Initialise(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
 
 
             base.Initialize();
@@ -74,10 +74,12 @@ public class CorleyEditor : CorleyGame {
 
     protected override void LoadContent() {
 
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
-
         // ! Temporary project load for testing.
         SceneManager.LoadScene("TestLevel");
+
+        SetWindowTitle("Corley Engine Editor v0.1.0");
+
+        base.LoadContent();
 
     }
 
@@ -106,8 +108,8 @@ public class CorleyEditor : CorleyGame {
         BuildCanvas(newWidth, newHeight);
 
         // Update Input so it registers the mouse position correctly.
-        var contentPos = ImGui.GetCursorScreenPos();
-        var contentSize = ImGui.GetContentRegionAvail();
+        System.Numerics.Vector2 contentPos = ImGui.GetCursorScreenPos();
+        System.Numerics.Vector2 contentSize = ImGui.GetContentRegionAvail();
 
         Input.ViewportOffset = new Vector2(contentPos.X, contentPos.Y);
         Input.ViewportDisplaySize = new Vector2(contentSize.X, contentSize.Y);
@@ -167,29 +169,6 @@ public class CorleyEditor : CorleyGame {
             DataSerializer.Save(_preferences, prefPath);
         }
 
-    }
-
-    private void ApplyStyle() {
-
-        var style = ImGui.GetStyle();
-
-        // Apply Geometry
-        style.WindowRounding = _preferences.WindowRounding;
-        style.FrameRounding = _preferences.FrameRounding;
-        style.GrabRounding = _preferences.GrabRounding;
-        style.WindowBorderSize = _preferences.WindowBorderSize;
-        style.ScrollbarSize = _preferences.ScrollbarSize;
-        style.FramePadding = _preferences.FramePadding;
-        style.WindowTitleAlign = _preferences.WindowTitleAlign;
-        style.WindowPadding = _preferences.WindowPadding;
-
-        // Apply Colors
-        foreach (var colorKvp in _preferences.ThemeColors) {
-            // Convert the string key (e.g. "WindowBg") back into the ImGuiCol enum
-            if (Enum.TryParse<ImGuiCol>(colorKvp.Key, out var imguiColorTarget)) {
-                style.Colors[(int)imguiColorTarget] = colorKvp.Value;
-            }
-        }
     }
 
     private string GetRootFolder([CallerFilePath] string sourceFilePath = "") {

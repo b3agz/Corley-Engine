@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Numerics;
+using ImGuiNET;
 
 namespace CorleyEngine.Editor;
 
@@ -37,4 +38,30 @@ public class EditorPreferences {
         { "HeaderActive", new Vector4(0.35f, 0.35f, 0.35f, 1.00f) }
 
     };
+
+    /// <summary>
+    /// Applies the preferences contained in this class.
+    /// </summary>
+    /// <param name="style">The ImGui style to apply to.</param>
+    public void ApplyTo(ImGuiStylePtr style) {
+
+        // Apply Geometry
+        style.WindowRounding = WindowRounding;
+        style.FrameRounding = FrameRounding;
+        style.GrabRounding = GrabRounding;
+        style.WindowBorderSize = WindowBorderSize;
+        style.ScrollbarSize = ScrollbarSize;
+        style.FramePadding = FramePadding;
+        style.WindowTitleAlign = WindowTitleAlign;
+        style.WindowPadding = WindowPadding;
+
+        // Apply Colors
+        foreach (var colorKvp in ThemeColors) {
+            // Convert the string key (e.g. "WindowBg") back into the ImGuiCol enum
+            if (Enum.TryParse<ImGuiCol>(colorKvp.Key, out var imguiColorTarget)) {
+                style.Colors[(int)imguiColorTarget] = colorKvp.Value;
+            }
+        }
+
+    }
 }

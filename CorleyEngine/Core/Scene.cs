@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Microsoft.Xna.Framework.Graphics;
 using CorleyEngine.Components;
 using Microsoft.Xna.Framework;
@@ -71,11 +70,8 @@ public class Scene {
     /// </summary>
     public void Draw(SpriteBatch spriteBatch) {
 
-        // 1. Get the camera's matrix (or use Identity if no camera exists, which means no offset)
         Matrix viewMatrix = Camera.MainCamera != null ? Camera.MainCamera.GetViewMatrix() : Matrix.Identity;
 
-        // 2. Begin the batch using the camera's illusion!
-        // Note: SpriteSortMode.Deferred and BlendState.AlphaBlend are MonoGame defaults.
         spriteBatch.Begin(
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
