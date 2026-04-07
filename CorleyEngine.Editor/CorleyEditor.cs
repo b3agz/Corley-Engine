@@ -6,6 +6,7 @@ using CorleyEngine.IO;
 using System;
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Collections.Generic;
 
 namespace CorleyEngine.Editor;
 
@@ -18,6 +19,8 @@ public class CorleyEditor : CorleyGame {
 
     private EditorPreferences _preferences;
     private readonly string _prefsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "editor_prefs.json");
+
+    List<EditorWindow> _windows = new();
 
     public CorleyEditor() {
 
@@ -79,6 +82,8 @@ public class CorleyEditor : CorleyGame {
 
         SetWindowTitle("Corley Engine Editor v0.1.0");
 
+        _windows.Add(new StatusWindow());
+
         base.LoadContent();
 
     }
@@ -97,6 +102,20 @@ public class CorleyEditor : CorleyGame {
     protected override void Draw(GameTime gameTime) {
 
         _imGuiRenderer.BeforeLayout(gameTime);
+
+        // Top bar/drop down menus.
+        if (ImGui.BeginMainMenuBar()) {
+            if (ImGui.BeginMenu("File")) {
+                if (ImGui.MenuItem("Save Scene", "Ctrl+S")) { /* Save Logic */ }
+                if (ImGui.MenuItem("Exit Editor")) { Exit(); }
+                ImGui.EndMenu();
+            }
+            if (ImGui.BeginMenu("View")) {
+                ImGui.MenuItem("Entity Inspector");
+                ImGui.EndMenu();
+            }
+            ImGui.EndMainMenuBar();
+        }
 
         // Draw the Game View window.
         ImGui.Begin("Game View", ImGuiWindowFlags.NoScrollbar);
@@ -122,34 +141,10 @@ public class CorleyEditor : CorleyGame {
         ImGui.Image(_imGuiRenderer.BindTexture(_gameCanvas), size);
         ImGui.End();
 
-        // Top bar/drop down menus.
-        if (ImGui.BeginMainMenuBar()) {
-            if (ImGui.BeginMenu("File")) {
-                if (ImGui.MenuItem("Save Scene", "Ctrl+S")) { /* Save Logic */ }
-                if (ImGui.MenuItem("Exit Editor")) { Exit(); }
-                ImGui.EndMenu();
-            }
-            if (ImGui.BeginMenu("View")) {
-                ImGui.MenuItem("Entity Inspector");
-                ImGui.EndMenu();
-            }
-            ImGui.EndMainMenuBar();
+        // Loop through any open EditorWindows and draw them.
+        foreach (EditorWindow window in _windows) {
+            window.Draw(gameTime);
         }
-
-        // Floating project status widow.
-        ImGui.Begin("Engine Status");
-        ImGui.Text("Corley Editor is online.");
-        ImGui.Separator();
-        ImGui.Text($"FPS: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds:0.0}");
-        ImGui.Text($"Uptime: {gameTime.TotalGameTime.TotalSeconds:0.0}s");
-        ImGui.Spacing();
-        ImGui.TextColored(new System.Numerics.Vector4(1, 0.8f, 0.2f, 1), "No Project Loaded");
-        ImGui.End();
-
-        // Built-in settings tool that lets me play with the UI style in realtime.
-        // ImGui.Begin("Style Editor");
-        // ImGui.ShowStyleEditor(); // This is the gold mine
-        // ImGui.End();
 
         _imGuiRenderer.AfterLayout();
 
