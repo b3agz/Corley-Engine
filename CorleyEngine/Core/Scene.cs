@@ -37,6 +37,12 @@ public class Scene {
         }
     }
 
+    /// <summary>
+    /// Returns only the entities that sit at the root of the scene (Parent == null).
+    /// </summary>
+    public IEnumerable<Entity> GetRootEntities() {
+        return _entities.Where(e => e.Parent == null);
+    }
 
     /// <summary>
     /// Adds an Entity to the scene.

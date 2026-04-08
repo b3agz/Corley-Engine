@@ -77,6 +77,10 @@ public class Entity(string name) {
         if (newParent == Parent)
             return;
 
+        // Prevent an endless cycle caused by setting a parent that is currently a child.
+        if (newParent != null && newParent.IsDescendantOf(this))
+            return;
+
         // If the entity already has a parent, we need to tell that parent that this one is no longer a child.
         Parent?._children.Remove(this);
 
