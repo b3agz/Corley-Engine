@@ -101,6 +101,10 @@ public static class SceneManager {
         // Create a new Scene instance, initialise it with the SceneData, and set it as the ActiveScene.
         Scene runtimeScene = new ();
         runtimeScene.Initialize(loadedData);
+
+        // Rebuild the links between child entities and their parents.
+        runtimeScene.RebuildHierarchy();
+
         ActiveScene = runtimeScene;
 
     }

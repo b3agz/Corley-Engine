@@ -66,8 +66,8 @@ public class CorleyEditor : CorleyGame {
             _imGuiRenderer.RebuildFontAtlas();
 
             // ! Temporary project load for testing.
-            ProjectManager.LoadProject(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
-            AssetManager.Initialise(@"D:\Corley Engine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
+            ProjectManager.LoadProject(@"G:\CorleyEngine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
+            AssetManager.Initialise(@"G:\CorleyEngine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
 
             var io = ImGui.GetIO();
             io.ConfigWindowsMoveFromTitleBarOnly = true;
@@ -83,6 +83,9 @@ public class CorleyEditor : CorleyGame {
             // Add to your list of windows to draw later
             _windows.Add(_gameView);
             _windows.Add(_sceneView);
+            _windows.Add(new HierarchyWindow());
+            _windows.Add(new ConsoleWindow());
+            _windows.Add(new ImGuiStyleWindow());
 
             base.Initialize();
             Console.WriteLine("=== INITIALIZATION COMPLETE ===");
@@ -105,7 +108,7 @@ public class CorleyEditor : CorleyGame {
 
         List<Entity> entities = SceneManager.ActiveScene?.GetEntities();
 
-        inspector.TargetEntity = entities[0];
+        inspector.TargetEntity = entities[1];
 
         _windows.Add(inspector);
 
@@ -207,10 +210,10 @@ public class CorleyEditor : CorleyGame {
 
     }
 
-    private string GetRootFolder([CallerFilePath] string sourceFilePath = "") {
-        string? dir = Path.GetDirectoryName(sourceFilePath);
-        return Directory.Exists(dir) ? dir : AppDomain.CurrentDomain.BaseDirectory;
-    }
+        private string GetRootFolder([CallerFilePath] string sourceFilePath = "") {
+            string dir = Path.GetDirectoryName(sourceFilePath);
+            return Directory.Exists(dir) ? dir : AppDomain.CurrentDomain.BaseDirectory;
+        }
 
     private string GetPrefsPath() {
         return Path.Combine(GetRootFolder(), "editor_prefs.json");

@@ -18,6 +18,14 @@ public abstract class CorleyGame : Game {
 
         GameCanvas = new RenderTarget2D(GraphicsDevice, RenderWidth, RenderHeight);
         _sceneBatch = new SpriteBatch(GraphicsDevice);
+
+        // Catch unhandled C# exceptions and push them to our visual console
+        AppDomain.CurrentDomain.UnhandledException += (sender, args) => {
+            if (args.ExceptionObject is Exception ex) {
+                EngineLogger.Error($"[FATAL C# CRASH] {ex.Message}\n{ex.StackTrace}");
+            }
+        };
+
         base.Initialize();
 
     }

@@ -55,6 +55,19 @@ public class Scene {
     }
 
     /// <summary>
+    /// Moves through the hierarchy and relinks any child entities to their parents.
+    /// </summary>
+    public void RebuildHierarchy() {
+
+        foreach (Entity entity in _entities) {
+
+            if (entity.Children.Count > 0)
+                entity.RelinkChildren();
+
+        }
+    }
+
+    /// <summary>
     /// Updates every Entity in the scene.
     /// </summary>
     public void Update() {
