@@ -40,66 +40,58 @@ public class CorleyEditor : CorleyGame {
 
     protected override void Initialize() {
 
-        try {
+        Log.Info("Starting Editor...");
 
-            Console.WriteLine("=== CORLEY EDITOR INITIALIZING ===");
+        AssetManager.Initialise(ProjectManager.CurrentProject.AbsoluteAssetPath, GraphicsDevice);
 
-            ImGui.CreateContext();
+        Window.AllowUserResizing = true;
 
-            LoadPreferences();
+        ImGui.CreateContext();
 
-            _imGuiRenderer = new ImGuiRenderer(this);
+        LoadPreferences();
 
-            _preferences.ApplyTo(ImGui.GetStyle());
+        _imGuiRenderer = new ImGuiRenderer(this);
 
-            string absoluteFontPath = GetFontPath(_preferences.FontPath);
-            Console.WriteLine($"[Editor] Searching for font at: {absoluteFontPath}");
+        _preferences.ApplyTo(ImGui.GetStyle());
 
-            if (File.Exists(absoluteFontPath)) {
-                ImGui.GetIO().Fonts.AddFontFromFileTTF(absoluteFontPath, _preferences.FontSize);
-                Console.WriteLine("[Editor] Font loaded successfully.");
-            }
-            else {
-                Console.WriteLine("[Editor] WARNING: Font file not found!");
-            }
+        string absoluteFontPath = GetFontPath(_preferences.FontPath);
+        Console.WriteLine($"[Editor] Searching for font at: {absoluteFontPath}");
 
-            _imGuiRenderer.RebuildFontAtlas();
-
-            // ! Temporary project load for testing.
-            ProjectManager.LoadProject(@"G:\CorleyEngine\CorleyEngine.Runtime\SampleProject\Sample Project.corleyproject");
-            AssetManager.Initialise(@"G:\CorleyEngine\CorleyEngine.Runtime\SampleProject\Assets", GraphicsDevice);
-
-            var io = ImGui.GetIO();
-            io.ConfigWindowsMoveFromTitleBarOnly = true;
-            io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
-
-            _statusBar = new StatusBar();
-            _workspace = new MainWorkspace();
-
-            // Pass dependencies through constructors
-            _gameView = new GameViewWindow(this, _imGuiRenderer);
-            _sceneView = new SceneViewWindow(GraphicsDevice, _imGuiRenderer);
-
-            // Add to your list of windows to draw later
-            _windows.Add(_gameView);
-            _windows.Add(_sceneView);
-            _windows.Add(new HierarchyWindow());
-            _windows.Add(new ConsoleWindow());
-            _windows.Add(new ImGuiStyleWindow());
-
-            base.Initialize();
-            Console.WriteLine("=== INITIALIZATION COMPLETE ===");
+        if (File.Exists(absoluteFontPath)) {
+            ImGui.GetIO().Fonts.AddFontFromFileTTF(absoluteFontPath, _preferences.FontSize);
+            Console.WriteLine("[Editor] Font loaded successfully.");
         }
-        catch (Exception ex) {
-            Console.WriteLine($"Critical Error: {ex.Message}");
+        else {
+            Console.WriteLine("[Editor] WARNING: Font file not found!");
         }
+
+        _imGuiRenderer.RebuildFontAtlas();
+
+        var io = ImGui.GetIO();
+        io.ConfigWindowsMoveFromTitleBarOnly = true;
+        io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
+
+        _statusBar = new StatusBar();
+        _workspace = new MainWorkspace();
+
+        // Pass dependencies through constructors
+        _gameView = new GameViewWindow(this, _imGuiRenderer);
+        _sceneView = new SceneViewWindow(GraphicsDevice, _imGuiRenderer);
+
+        // Add to your list of windows to draw later
+        _windows.Add(_gameView);
+        _windows.Add(_sceneView);
+        _windows.Add(new HierarchyWindow());
+        _windows.Add(new ConsoleWindow());
+        //_windows.Add(new ImGuiStyleWindow());
+
+        base.Initialize();
 
     }
 
     protected override void LoadContent() {
 
-        // ! Temporary project load for testing.
-        SceneManager.LoadScene("TestLevel");
+        base.LoadContent();
 
         SetWindowTitle("Corley Engine Editor v0.1.0");
 
@@ -110,26 +102,19 @@ public class CorleyEditor : CorleyGame {
 
         inspector.TargetEntity = entities[1];
 
+        Entity entity = new("Child");
+        entity.SetParent(entities[0]);
+
         _windows.Add(inspector);
-
-
-        base.LoadContent();
 
     }
 
     protected override void Update(GameTime gameTime) {
 
-        // TODO: By default, Time will operate from when the editor launched. It should run (and reset) when play mode is initiated.
-        Time.Update(gameTime);
-
-        // We want to get the game input regardless. Game input is tied to the game view, and we'll need
-        // relative cursor positions to be able to move objects.
-        Input.Update();
+        base.Update(gameTime);
 
         // TODO: If PlayMode, call update function on the active scene.
         SceneManager.ActiveScene?.Update();
-
-        base.Update(gameTime);
 
     }
 
@@ -210,10 +195,10 @@ public class CorleyEditor : CorleyGame {
 
     }
 
-        private string GetRootFolder([CallerFilePath] string sourceFilePath = "") {
-            string dir = Path.GetDirectoryName(sourceFilePath);
-            return Directory.Exists(dir) ? dir : AppDomain.CurrentDomain.BaseDirectory;
-        }
+    private string GetRootFolder([CallerFilePath] string sourceFilePath = "") {
+        string dir = Path.GetDirectoryName(sourceFilePath);
+        return Directory.Exists(dir) ? dir : AppDomain.CurrentDomain.BaseDirectory;
+    }
 
     private string GetPrefsPath() {
         return Path.Combine(GetRootFolder(), "editor_prefs.json");

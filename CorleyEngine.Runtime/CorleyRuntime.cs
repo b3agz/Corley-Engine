@@ -38,7 +38,6 @@ public class CorleyRuntime : CorleyGame {
 
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        SceneManager.LoadScene("TestLevel");
 
         SetWindowTitle("Corley Engine v0.1.0");
 
@@ -48,8 +47,7 @@ public class CorleyRuntime : CorleyGame {
 
     protected override void Update(GameTime gameTime) {
 
-        // Time always needs updating for all the scripts that use it.
-        Time.Update(gameTime);
+        base.Update(gameTime);
 
         // Update canvas and input so that camera renders properly and mouse cursor position is
         // reported accurately.
@@ -59,13 +57,8 @@ public class CorleyRuntime : CorleyGame {
         Input.ViewportDisplaySize = new Vector2(viewport.Width, viewport.Height);
         Input.ViewportScale = Vector2.One;
 
-        // Update the Input class so components get up to date information.
-        Input.Update();
-
         // Hand execution over to the loaded scene
         SceneManager.ActiveScene?.Update();
-
-        base.Update(gameTime);
 
     }
 

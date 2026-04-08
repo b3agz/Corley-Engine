@@ -30,6 +30,25 @@ public abstract class CorleyGame : Game {
 
     }
 
+    protected override void LoadContent() {
+
+        SceneManager.LoadScene(ProjectManager.CurrentProject.DefaultScene);
+
+        base.LoadContent();
+
+    }
+
+    protected override void Update(GameTime gameTime) {
+
+        // TODO: By default, Time will operate from when the editor launched. It should run (and reset) when play mode is initiated.
+        Time.Update(gameTime);
+
+        // We want to get the game input regardless. Game input is tied to the game view, and we'll need
+        // relative cursor positions to be able to move objects.
+        Input.Update();
+
+    }
+
     protected override void Draw(GameTime gameTime) {
 
         // Tell MonoGame to draw to our internal canvas.
