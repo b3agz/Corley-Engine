@@ -1,4 +1,4 @@
-namespace CorleyEngine.Core;
+namespace CorleyEngine;
 
 /// <summary>
 /// An enum denoting the type of message being logged.

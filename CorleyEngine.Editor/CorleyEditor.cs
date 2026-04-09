@@ -17,73 +17,96 @@ public class CorleyEditor : CorleyGame {
     private ImGuiRenderer _imGuiRenderer;
     private StatusBar _statusBar;
     private MainWorkspace _workspace;
+    private TitleBar _titleBar;
+    private MenuBar _menuBar;
 
     private GameViewWindow _gameView;
     private SceneViewWindow _sceneView;
+    private ConsoleWindow _console;
+    private InspectorWindow _inspector;
 
-    private EditorPreferences _preferences;
-    private readonly string _prefsPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "editor_prefs.json");
+    public static ImFontPtr StatusBarFont { get; private set; }
 
-    List<EditorWindow> _windows = new();
+    public static EditorPreferences Preferences { get; private set; }
+
+    public EditorState State { get; private set; }
+
+    List<EditorWindow> _windows = [];
 
     public CorleyEditor() {
+
+        Log.Info("[CorleyEditor] Starting Editor...");
 
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
-        // TODO: Store previous window size and re-use it.
-        _graphics.PreferredBackBufferWidth = 1440;
-        _graphics.PreferredBackBufferHeight = 810;
+        Preferences = EditorPreferences.LoadOrCreate(GetRootFolder());
+
+        Window.IsBorderless = true;
+        Window.AllowUserResizing = false;
+
+        _graphics.PreferredBackBufferWidth = 1920;
+        _graphics.PreferredBackBufferHeight = 1080;
 
     }
 
     protected override void Initialize() {
 
-        Log.Info("Starting Editor...");
-
+        // Initialise the engine asset manager. Program.cs has already verified we have a valid
+        // Corley Engine Project and loaded it into memory before we get here. If we don't, the
+        // editor never gets spun up.
         AssetManager.Initialise(ProjectManager.CurrentProject.AbsoluteAssetPath, GraphicsDevice);
 
-        Window.AllowUserResizing = true;
+        #region ImGui Initialisation
 
         ImGui.CreateContext();
-
-        LoadPreferences();
-
+        ImGuiIOPtr io = ImGui.GetIO();
         _imGuiRenderer = new ImGuiRenderer(this);
 
-        _preferences.ApplyTo(ImGui.GetStyle());
+        Preferences.ApplyTo(ImGui.GetStyle());
 
-        string absoluteFontPath = GetFontPath(_preferences.FontPath);
-        Console.WriteLine($"[Editor] Searching for font at: {absoluteFontPath}");
+        string absoluteFontPath = GetFontPath(Preferences.FontPath);
+
 
         if (File.Exists(absoluteFontPath)) {
-            ImGui.GetIO().Fonts.AddFontFromFileTTF(absoluteFontPath, _preferences.FontSize);
-            Console.WriteLine("[Editor] Font loaded successfully.");
-        }
-        else {
-            Console.WriteLine("[Editor] WARNING: Font file not found!");
+
+            ImGui.GetIO().Fonts.AddFontFromFileTTF(absoluteFontPath, Preferences.FontSize);
+            StatusBarFont = ImGui.GetIO().Fonts.AddFontFromFileTTF(absoluteFontPath, MathF.Round(Preferences.FontSize * 0.9f));
+            Log.Info($"[CorleyEditor] Font loaded successfully.");
+
+        } else {
+
+            Log.Warning($"[CorleyEditor] WARNING: Font file not found at {absoluteFontPath} - falling back to default font.");
+
         }
 
         _imGuiRenderer.RebuildFontAtlas();
 
-        var io = ImGui.GetIO();
         io.ConfigWindowsMoveFromTitleBarOnly = true;
         io.ConfigFlags |= ImGuiConfigFlags.DockingEnable;
 
+        #endregion
+
         _statusBar = new StatusBar();
         _workspace = new MainWorkspace();
+        _titleBar = new TitleBar(this, _graphics, _imGuiRenderer);
+        _menuBar = new(this);
+        _inspector = new InspectorWindow();
+        _console = new();
 
-        // Pass dependencies through constructors
+        // Game and scene view have dependencies in order to draw the game into the editor.
         _gameView = new GameViewWindow(this, _imGuiRenderer);
         _sceneView = new SceneViewWindow(GraphicsDevice, _imGuiRenderer);
 
-        // Add to your list of windows to draw later
-        _windows.Add(_gameView);
-        _windows.Add(_sceneView);
-        _windows.Add(new HierarchyWindow());
-        _windows.Add(new ConsoleWindow());
-        //_windows.Add(new ImGuiStyleWindow());
+        // Add windows to the editor. Any window in _windows is drawn.
+        //_windows.Add(_gameView);
+        //_windows.Add(_sceneView);
+        //_windows.Add(new ConsoleWindow());
+        _windows.Add(_inspector);
+        _windows.Add(new HierarchyWindow(_inspector));
+
+        InactiveSleepTime = new TimeSpan(0);
 
         base.Initialize();
 
@@ -95,17 +118,11 @@ public class CorleyEditor : CorleyGame {
 
         SetWindowTitle("Corley Engine Editor v0.1.0");
 
-        InspectorWindow inspector = new();
-
-
-        List<Entity> entities = SceneManager.ActiveScene?.GetEntities();
-
-        inspector.TargetEntity = entities[1];
-
-        Entity entity = new("Child");
-        entity.SetParent(entities[0]);
-
-        _windows.Add(inspector);
+        // Temporary code for testing hierarchy view and inspector.
+        // List<Entity> entities = SceneManager.ActiveScene?.GetEntities();
+        // _inspector.TargetEntity = entities[1];
+        // Entity entity = Entity.CreateStageEntity("Child", new(240, 100));
+        // entity.SetParent(entities[0]);
 
     }
 
@@ -113,85 +130,48 @@ public class CorleyEditor : CorleyGame {
 
         base.Update(gameTime);
 
-        // TODO: If PlayMode, call update function on the active scene.
-        SceneManager.ActiveScene?.Update();
+        // If we're in playmode, trigger run the scene's update loop.
+        if (State == EditorState.Play)
+            SceneManager.ActiveScene?.Update();
 
     }
 
     protected override void Draw(GameTime gameTime) {
 
+        _sceneView.RenderSceneToCanvas(_sceneBatch, SceneManager.ActiveScene);
+        base.Draw(gameTime);
+    GraphicsDevice.Clear(new Color(30, 30, 30));
+
         _imGuiRenderer.BeforeLayout(gameTime);
 
-        _workspace.Draw();
+        string activeColourLabel = this.IsActive ? "TitleBg" : "MenuBarBg";
+        System.Numerics.Vector4 activeColour = Preferences.ThemeColors[activeColourLabel];
 
-        // Top bar/drop down menus.
-        if (ImGui.BeginMainMenuBar()) {
-            if (ImGui.BeginMenu("File")) {
-                if (ImGui.MenuItem("Save Scene", "Ctrl+S")) { /* Save Logic */ }
-                if (ImGui.MenuItem("Exit Editor")) { Exit(); }
-                ImGui.EndMenu();
-            }
-            if (ImGui.BeginMenu("View")) {
-                ImGui.MenuItem("Entity Inspector");
-                ImGui.EndMenu();
-            }
-            ImGui.EndMainMenuBar();
-        }
+        _titleBar.Draw(activeColour);
 
-        _statusBar.RightMessage = $"FPS: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds:0} | Corley Engine";
-        _statusBar.Draw();
+        _menuBar.Draw();
 
-        // Draw the Game View window.
-        ImGui.Begin("Game View", ImGuiWindowFlags.NoScrollbar);
+        _workspace.Draw(gameTime, _sceneView, _gameView, _console);
 
-        // Set the size of the Game View and resize the canvas if necessary.
-        System.Numerics.Vector2 size = ImGui.GetContentRegionAvail();
-        int newWidth = (int)size.X;
-        int newHeight = (int)size.Y;
-        BuildCanvas(newWidth, newHeight);
+        _statusBar.Draw(activeColour, gameTime);
 
-        // Update Input so it registers the mouse position correctly.
-        System.Numerics.Vector2 contentPos = ImGui.GetCursorScreenPos();
-        System.Numerics.Vector2 contentSize = ImGui.GetContentRegionAvail();
-
-        Input.ViewportOffset = new Vector2(contentPos.X, contentPos.Y);
-        Input.ViewportDisplaySize = new Vector2(contentSize.X, contentSize.Y);
-        Input.ViewportScale = new Vector2((float)RenderWidth / contentSize.X, (float)RenderHeight / contentSize.Y);
-
-        // Draw the game logic here. If we do it up top, the game view flickers when the
-        // camera moves. If we do it at the end, we get a black screen with no UI.
-        base.Draw(gameTime);
-
-        ImGui.Image(_imGuiRenderer.BindTexture(GameCanvas), size);
-        ImGui.End();
-
-        // Render the scene to the sceneview window. Needs to be done
-        _sceneView.RenderSceneToCanvas(_sceneBatch, SceneManager.ActiveScene);
 
         // Loop through any open EditorWindows and draw them.
         foreach (EditorWindow window in _windows) {
             window.Draw(gameTime);
         }
 
-        //DrawSceneView();
+        // Draw window border.
+        ImGui.GetForegroundDrawList().AddRect(
+            new System.Numerics.Vector2(0, 0),
+            new System.Numerics.Vector2(GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height),
+            ImGui.GetColorU32(activeColour),
+            0.0f,
+            ImDrawFlags.None,
+            2.0f  // Border thickness.
+        );
 
         _imGuiRenderer.AfterLayout();
-
-    }
-
-    private void LoadPreferences() {
-
-        string prefPath = GetPrefsPath();
-
-        if (File.Exists(prefPath)) {
-            Console.WriteLine($"[Editor] Found prefs at: {prefPath}");
-            _preferences = DataSerializer.Load<EditorPreferences>(prefPath);
-        }
-        else {
-            Console.WriteLine($"[Editor] No prefs found. Generating default editor_prefs.json and saving to {prefPath}...");
-            _preferences = new EditorPreferences();
-            DataSerializer.Save(_preferences, prefPath);
-        }
 
     }
 
@@ -200,12 +180,21 @@ public class CorleyEditor : CorleyGame {
         return Directory.Exists(dir) ? dir : AppDomain.CurrentDomain.BaseDirectory;
     }
 
-    private string GetPrefsPath() {
-        return Path.Combine(GetRootFolder(), "editor_prefs.json");
-    }
-
     private string GetFontPath(string relativePath) {
         return Path.Combine(GetRootFolder(), relativePath);
+    }
+
+    private ImGuiStyleWindow _styleWindow;
+    public void ToggleImGuiStyleWindow() {
+
+        if (_styleWindow == null)
+            _styleWindow = new();
+
+        if (_windows.Contains(_styleWindow))
+            _windows.Remove(_styleWindow);
+        else
+            _windows.Add(_styleWindow);
+
     }
 
 }

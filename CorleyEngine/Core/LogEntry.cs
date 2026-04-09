@@ -1,4 +1,4 @@
-namespace CorleyEngine.Core;
+namespace CorleyEngine;
 
 /// <summary>
 /// A custom log entry class for reporting to the console.

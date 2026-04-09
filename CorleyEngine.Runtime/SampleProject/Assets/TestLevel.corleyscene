@@ -4,6 +4,7 @@
     {
       "Id": 0,
       "Name": "Background",
+      "IsActive": true,
       "Components": [
         {
           "$type": "Transform",
@@ -33,11 +34,34 @@
             "Y": 654
           }
         }
+      ],
+      "Children": [
+        {
+          "Id": 1,
+          "Name": "Child",
+          "IsActive": true,
+          "Components": [
+            {
+              "$type": "Transform",
+              "Position": {
+                "X": 240,
+                "Y": 100
+              },
+              "Rotation": 0,
+              "Scale": {
+                "X": 1,
+                "Y": 1
+              }
+            }
+          ],
+          "Children": []
+        }
       ]
     },
     {
-      "Id": 1,
+      "Id": 2,
       "Name": "Player",
+      "IsActive": true,
       "Components": [
         {
           "$type": "Transform",
@@ -75,9 +99,11 @@
           }
         },
         {
-          "$type": "Camera"
+          "$type": "Camera",
+          "Zoom": 1
         }
-      ]
+      ],
+      "Children": []
     }
   ]
 }

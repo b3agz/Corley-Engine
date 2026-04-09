@@ -10,10 +10,28 @@ using Microsoft.Xna.Framework;
 namespace CorleyEngine.Editor;
 
 public class InspectorWindow : EditorWindow {
+
+
     // The object we are currently looking at
     public Entity TargetEntity { get; set; }
 
-    public InspectorWindow() : base("Inspector") { }
+    public InspectorWindow() : base("Inspector") {
+        WindowFlags = ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoResize;
+    }
+
+    protected override void BeforeBegin() {
+        var viewport = ImGui.GetMainViewport();
+
+        float topOffset = CorleyEditor.Preferences.TitleBarHeight + CorleyEditor.Preferences.MenuBarHeight;
+        float bottomOffset = CorleyEditor.Preferences.StatusBarHeight;
+
+        // Pin to the right side
+        float xPos = viewport.WorkSize.X - CorleyEditor.Preferences.InspectorWidth;
+        ImGui.SetNextWindowPos(new System.Numerics.Vector2(xPos, topOffset));
+
+        ImGui.SetNextWindowSize(new System.Numerics.Vector2(CorleyEditor.Preferences.InspectorWidth, viewport.WorkSize.Y - topOffset - bottomOffset));
+
+    }
 
     protected override void OnGui(GameTime gameTime) {
 

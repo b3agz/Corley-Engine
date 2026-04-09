@@ -1,45 +1,83 @@
 using ImGuiNET;
 using System.Numerics;
+using Microsoft.Xna.Framework; // Needed for GameTime
 
 namespace CorleyEngine.Editor;
 
-/// <summary>
-/// Creates the main workspace where <see cref="EditorWindow"/>s live.
-/// </summary>
 public class MainWorkspace {
 
-    // TODO: Centralise this variable somewhere... like EditorPreferences maybe.
-    private const float STATUS_BAR_HEIGHT = 40f;
-
-    public void Draw() {
+    public void Draw(GameTime gameTime, SceneViewWindow sceneView, GameViewWindow gameView, ConsoleWindow console) {
 
         var viewport = ImGui.GetMainViewport();
 
-        Vector2 workspaceSize = new(viewport.WorkSize.X, viewport.WorkSize.Y - STATUS_BAR_HEIGHT);
+        // 1. Calculate the bounds of the central area
+        float topOffset = CorleyEditor.Preferences.TitleBarHeight + CorleyEditor.Preferences.MenuBarHeight;
+        float bottomOffset = CorleyEditor.Preferences.StatusBarHeight;
+        float leftOffset = CorleyEditor.Preferences.HierarchyWidth;
+        float rightOffset = CorleyEditor.Preferences.InspectorWidth; // Inspector width
 
-        ImGui.SetNextWindowPos(viewport.WorkPos);
-        ImGui.SetNextWindowSize(workspaceSize);
-        ImGui.SetNextWindowViewport(viewport.ID);
+        float availableWidth = viewport.WorkSize.X - leftOffset - rightOffset;
+        float availableHeight = viewport.WorkSize.Y - topOffset - bottomOffset;
 
-        ImGuiWindowFlags windowFlags = ImGuiWindowFlags.NoDocking;
-        windowFlags |= ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoResize | ImGuiWindowFlags.NoMove;
-        windowFlags |= ImGuiWindowFlags.NoBringToFrontOnFocus | ImGuiWindowFlags.NoNavFocus | ImGuiWindowFlags.NoBackground;
+        // 2. Define the Split (75% Top, 25% Bottom)
+        float stageHeight = (float)System.Math.Floor(availableHeight * 0.75f);
+        float bottomPanelHeight = availableHeight - stageHeight;
 
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(0.0f, 0.0f));
+        ImGuiWindowFlags flags = ImGuiWindowFlags.NoCollapse |
+                                 ImGuiWindowFlags.NoResize |
+                                 ImGuiWindowFlags.NoMove |
+                                 ImGuiWindowFlags.NoTitleBar |
+                                 ImGuiWindowFlags.NoBringToFrontOnFocus;
 
-        ImGui.Begin("MainDockSpaceWindow", windowFlags);
-        ImGui.PopStyleVar();
+        // Strip the border for a flush fit
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0f);
 
-        var io = ImGui.GetIO();
-        if ((io.ConfigFlags & ImGuiConfigFlags.DockingEnable) != 0) {
-            uint dockspaceId = ImGui.GetID("MainDockSpace");
+        // --- TOP WINDOW: THE STAGE (Scene / Game) ---
+        ImGui.SetNextWindowPos(new (leftOffset, topOffset));
+        ImGui.SetNextWindowSize(new (availableWidth, stageHeight));
 
-            // Swap NoWindowMenuButton for AutoHideTabBar
-            ImGuiDockNodeFlags dockFlags = ImGuiDockNodeFlags.PassthruCentralNode | ImGuiDockNodeFlags.AutoHideTabBar;
+        if (ImGui.Begin("MainStageWindow", flags)) {
+            if (ImGui.BeginTabBar("MainStageTabs")) {
 
-            ImGui.DockSpace(dockspaceId, new Vector2(0.0f, 0.0f), dockFlags);
+                if (ImGui.BeginTabItem("Scene View")) {
+                    sceneView.DrawCustom(gameTime);
+                    ImGui.EndTabItem();
+                }
+
+                if (ImGui.BeginTabItem("Game View")) {
+                    gameView.DrawCustom(gameTime);
+                    ImGui.EndTabItem();
+                }
+
+                // Future spot for your visual Node Editor tab!
+
+                ImGui.EndTabBar();
+            }
         }
-
         ImGui.End();
+
+        // --- BOTTOM WINDOW: THE CONSOLE / ASSETS ---
+        ImGui.SetNextWindowPos(new (leftOffset, topOffset + stageHeight));
+        ImGui.SetNextWindowSize(new (availableWidth, bottomPanelHeight));
+
+        if (ImGui.Begin("BottomPanelWindow", flags)) {
+            if (ImGui.BeginTabBar("BottomPanelTabs")) {
+
+                if (ImGui.BeginTabItem("Console")) {
+                    console.DrawCustom(gameTime);
+                    ImGui.EndTabItem();
+                }
+
+                if (ImGui.BeginTabItem("Assets")) {
+                    ImGui.TextDisabled("Asset browser goes here...");
+                    ImGui.EndTabItem();
+                }
+
+                ImGui.EndTabBar();
+            }
+        }
+        ImGui.End();
+
+        ImGui.PopStyleVar();
     }
 }

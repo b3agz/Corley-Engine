@@ -1,5 +1,5 @@
 using ImGuiNET;
-using System.Numerics;
+using Microsoft.Xna.Framework;
 
 namespace CorleyEngine.Editor;
 
@@ -12,15 +12,13 @@ public class StatusBar {
     public string LeftMessage { get; set; } = "Ready";
     public string RightMessage { get; set; } = "Corley Engine v0.1";
 
-    private const float HEIGHT = 36f;
-
-    public void Draw() {
+    public void Draw(System.Numerics.Vector4 colour, GameTime gameTime) {
 
         var viewport = ImGui.GetMainViewport();
 
         // Place the status bar at the bottom of the window.
-        ImGui.SetNextWindowPos(new Vector2(viewport.WorkPos.X, viewport.WorkPos.Y + viewport.WorkSize.Y - HEIGHT));
-        ImGui.SetNextWindowSize(new Vector2(viewport.WorkSize.X, HEIGHT));
+        ImGui.SetNextWindowPos(new (viewport.WorkPos.X, viewport.WorkPos.Y + viewport.WorkSize.Y - CorleyEditor.Preferences.StatusBarHeight));
+        ImGui.SetNextWindowSize(new (viewport.WorkSize.X, CorleyEditor.Preferences.StatusBarHeight));
 
         // Make sure the status bar can't be moved or resized.
         ImGuiWindowFlags flags = ImGuiWindowFlags.NoDecoration |
@@ -31,27 +29,28 @@ public class StatusBar {
                                  ImGuiWindowFlags.NoMove;
 
         // Override certain general UI styling.
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(10, 6));
-        ImGui.PushStyleVar(ImGuiStyleVar.WindowMinSize, new Vector2(0, 0));
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new System.Numerics.Vector2(15, 5));
         ImGui.PushStyleVar(ImGuiStyleVar.WindowRounding, 0);
-        ImGui.PushStyleColor(ImGuiCol.WindowBg, new Vector4(0.12f, 0.12f, 0.12f, 1.0f));
+        ImGui.PushStyleColor(ImGuiCol.WindowBg, colour);
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0);
+        ImGui.PushFont(CorleyEditor.StatusBarFont);
+
 
         if (ImGui.Begin("##MainStatusBar", flags)) {
-            // Left-aligned status text
+
             ImGui.Text(LeftMessage);
 
-            // Right-aligned engine info
-            if (!string.IsNullOrEmpty(RightMessage)) {
-                var textSize = ImGui.CalcTextSize(RightMessage);
-                // Move the cursor to the far right, minus the text width and some padding
-                ImGui.SameLine(ImGui.GetWindowWidth() - textSize.X - 10);
-                ImGui.TextDisabled(RightMessage);
-            }
+            RightMessage = $"FPS: {1000f / gameTime.ElapsedGameTime.TotalMilliseconds:0} | Corley Engine"; // TODO: Add version number from engine data somewhere.
+            System.Numerics.Vector2 textSize = ImGui.CalcTextSize(RightMessage);
+            ImGui.SameLine(ImGui.GetWindowWidth() - textSize.X - 10);
+            ImGui.Text(RightMessage);
+
         }
+
         ImGui.End();
 
-        // Put the style back to general UI styling so the rest of the UI doesn't inherit this one.
         ImGui.PopStyleColor();
+        ImGui.PopFont();
         ImGui.PopStyleVar(3);
     }
 }

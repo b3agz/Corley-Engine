@@ -9,9 +9,7 @@ public class ImGuiStyleWindow : EditorWindow {
 
     protected override void OnGui(GameTime gameTime) {
 
-        ImGui.Begin("Style Editor");
         ImGui.ShowStyleEditor();
-        ImGui.End();
 
     }
 }

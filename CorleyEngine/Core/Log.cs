@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 
-namespace CorleyEngine.Core;
+namespace CorleyEngine;
 
 /// <summary>
 /// Class containing methods for logging messages to the console.

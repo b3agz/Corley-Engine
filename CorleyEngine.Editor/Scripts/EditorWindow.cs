@@ -16,6 +16,16 @@ public abstract class EditorWindow(string title) {
     public bool IsVisible { get; set; } = true;
 
     /// <summary>
+    /// Whether or not we should draw a border around this window.
+    /// </summary>
+    protected bool HasBorder { get; set; } = false;
+
+    /// <summary>
+    /// Allow subclasses to set their own flags.
+    /// </summary>
+    protected ImGuiWindowFlags WindowFlags = ImGuiWindowFlags.None;
+
+    /// <summary>
     ///
     /// </summary>
     /// <param name="gameTime"></param>
@@ -36,13 +46,31 @@ public abstract class EditorWindow(string title) {
 
     public void Draw(GameTime gameTime) {
 
-        ImGui.Begin(Title);
+        if (!IsVisible) return;
 
-        OnGui(gameTime);
+        BeforeBegin();
+
+        if (!HasBorder)
+            ImGui.PushStyleVar(ImGuiStyleVar.WindowBorderSize, 0.0f);
+
+
+        bool isOpen = ImGui.Begin(Title, WindowFlags);
+
+        if (isOpen) {
+            OnGui(gameTime);
+        }
 
         ImGui.End();
 
+        if (!HasBorder)
+            ImGui.PopStyleVar();
+
     }
+
+    /// <summary>
+    /// Overridden by subclasses, allows them to set their own details.
+    /// </summary>
+    protected virtual void BeforeBegin() { }
 
     /// <summary>
     /// Called from the GUI draw method.

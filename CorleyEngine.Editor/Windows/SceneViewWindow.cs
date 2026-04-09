@@ -6,6 +6,7 @@ using CorleyEngine.Core;
 namespace CorleyEngine.Editor;
 
 public class SceneViewWindow : EditorWindow {
+
     public EditorCamera Camera { get; private set; }
     public RenderTarget2D Canvas { get; private set; }
 
@@ -29,7 +30,7 @@ public class SceneViewWindow : EditorWindow {
         _graphics.SetRenderTarget(Canvas);
         _graphics.Clear(new Color(45, 45, 48)); // Dark grey to distinguish from Game View
 
-        // 2. Tell the scene to draw using the Editor Camera's matrix
+        // Tell the scene to draw using the Editor Camera's matrix
         Vector2 canvasSize = new (Canvas.Width, Canvas.Height);
         activeScene.Draw(spriteBatch, Camera.GetViewMatrix(canvasSize));
 
@@ -53,6 +54,8 @@ public class SceneViewWindow : EditorWindow {
         HandleCameraControls();
 
     }
+
+    public void DrawCustom(GameTime gameTime) => OnGui(gameTime);
 
     private void HandleCameraControls() {
 

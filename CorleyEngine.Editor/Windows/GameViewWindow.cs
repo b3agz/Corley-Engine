@@ -35,4 +35,7 @@ public class GameViewWindow : EditorWindow {
             ImGui.Image(_imGuiRenderer.BindTexture(_engineCore.GameCanvas), size);
         }
     }
+
+    public void DrawCustom(GameTime gameTime) => OnGui(gameTime);
+
 }

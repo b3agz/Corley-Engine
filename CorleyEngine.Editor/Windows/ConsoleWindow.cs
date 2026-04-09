@@ -59,4 +59,7 @@ public class ConsoleWindow : EditorWindow {
 
         ImGui.EndChild();
     }
+
+    public void DrawCustom(GameTime gameTime) => OnGui(gameTime);
+
 }
