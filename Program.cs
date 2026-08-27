@@ -18,14 +18,13 @@ class Program {
 
     static void Main() {
 
+        CorleyLog.LogInfo($"Initialising Corley Engine...");
+
         // Initialisation stuff.
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
         Raylib.SetTargetFPS(60);
         Raylib.InitWindow(TargetWidth, TargetHeight, "Corley Engine");
         Raylib.SetWindowMinSize(TargetWidth, TargetHeight);
-
-        // Maximize it immediately so it fills the screen without breaking bounds
-        //Raylib.MaximizeWindow();
 
         // Create a texture to draw the game to. This allows us to keep the game resolution consistent regardless of the window size.
         RenderTexture2D target = Raylib.LoadRenderTexture(EngineConstants.RESOLUTION_WIDTH, EngineConstants.RESOLUTION_HEIGHT);
@@ -45,6 +44,8 @@ class Program {
         // Initialize Cursor and hide the system cursor
         CorelyCursor cursor = new();
         Raylib.HideCursor();
+
+        CorleyLog.LogInfo("Initialisation complete, starting game loop.");
 
         // The core engine loop. Everything that happens during the game originates in this while loop.
         while (!Raylib.WindowShouldClose()) {
@@ -100,7 +101,7 @@ class Program {
             );
 
             // Draw the cursor unclamped so it looks natural if the user moves the cursor out of the game area.
-            Vector2 virtualMouseUnclamped = new (virtualX, virtualY);
+            Vector2 virtualMouseUnclamped = new(virtualX, virtualY);
             cursor.Draw(virtualMouseUnclamped, 1.0f);
 
             Raylib.EndTextureMode();
@@ -112,15 +113,17 @@ class Program {
             Raylib.ClearBackground(Color.Black);
 
             // OpenGL render textures are vertically flipped. Passing a negative height in the source rectangle fixes this.
-            Rectangle sourceRec = new (0.0f, 0.0f, (float)target.Texture.Width, (float)-target.Texture.Height);
+            Rectangle sourceRec = new(0.0f, 0.0f, (float)target.Texture.Width, (float)-target.Texture.Height);
 
             // Define where and how big the texture should be drawn on the physical screen
-            Rectangle destRec = new (offsetX, offsetY, EngineConstants.RESOLUTION_WIDTH * scale, EngineConstants.RESOLUTION_HEIGHT * scale);
+            Rectangle destRec = new(offsetX, offsetY, EngineConstants.RESOLUTION_WIDTH * scale, EngineConstants.RESOLUTION_HEIGHT * scale);
 
             Raylib.DrawTexturePro(target.Texture, sourceRec, destRec, Vector2.Zero, 0.0f, Color.White);
 
             Raylib.EndDrawing();
         }
+
+        CorleyLog.LogInfo("Shutting down Corley Engine...");
 
         // Handle shutdown.
         cursor.Unload();
