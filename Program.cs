@@ -42,20 +42,8 @@ class Program {
         Scene _activeScene = new Scene("Test Scene", camera);
         _activeScene.Init();
 
-        // Initialize Cursor
-        string cursorPath = "./Sprites/default_cursor.png";
-        CorelyCursor cursor;
-        if (File.Exists(cursorPath)) {
-            cursor = new CorelyCursor(cursorPath, new Vector2(2, 2));
-        }
-        else {
-            Image tempImg = Raylib.GenImageColor(16, 16, Color.Magenta);
-            Texture2D tempTex = Raylib.LoadTextureFromImage(tempImg);
-            Raylib.UnloadImage(tempImg);
-            cursor = new CorelyCursor(tempTex, new Vector2(0, 0));
-        }
-
-        // Hide the default OS cursor so it doesn't float over our custom one
+        // Initialize Cursor and hide the system cursor
+        CorelyCursor cursor = new();
         Raylib.HideCursor();
 
         // The core engine loop. Everything that happens during the game originates in this while loop.
@@ -136,6 +124,7 @@ class Program {
 
         // Handle shutdown.
         cursor.Unload();
+        Assets.UnloadAll();
         Raylib.UnloadRenderTexture(target);
         Raylib.CloseWindow();
     }
