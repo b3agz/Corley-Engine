@@ -55,10 +55,14 @@ public abstract class VisualObject : CorleyObject {
         // Draw the image to the screen. If the image was never found, draw an eye-searing magenta square
         // so we know it went wrong.
         if (_texture.HasValue && _texture.Value.Id != 0) {
-            Raylib.DrawTextureV(_texture.Value, Position, Color.White);
+            Rectangle sourceRec = new(0, 0, _texture.Value.Width, _texture.Value.Height);
+            Rectangle destRec = new(Position.X, Position.Y, _texture.Value.Width * Scale.X, _texture.Value.Height * Scale.Y);
+            
+            // Draw using origin at 0,0 to match Position as top-left corner
+            Raylib.DrawTexturePro(_texture.Value, sourceRec, destRec, Vector2.Zero, Rotation, Color.White);
         }
         else {
-            Raylib.DrawRectangle((int)Position.X, (int)Position.Y, 32, 32, Color.Magenta);
+            Raylib.DrawRectanglePro(new Rectangle(Position.X, Position.Y, 32 * Scale.X, 32 * Scale.Y), Vector2.Zero, Rotation, Color.Magenta);
         }
     }
 }

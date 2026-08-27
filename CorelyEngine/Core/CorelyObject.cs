@@ -10,13 +10,15 @@ public abstract class CorleyObject : IDisposable {
     public readonly uint Id;
     public string Name { get; set; }
     public Vector2 Position { get; set; }
-    public Vector2 Scale { get; set; }
-    public uint Depth { get; set; }
+    public Vector2 Scale { get; set; } = new (1f, 1f);
+    public float Rotation { get; set; } = 0f;
+    public uint Depth { get; set; } = 0;
     public bool IsEnabled { get; private set; } = true;
 
     protected CorleyObject() {
         Id = 0;
         Name = "New CorelyObject";
+        Scale = new Vector2(1f, 1f);
         InternalStart();
     }
 
@@ -24,6 +26,8 @@ public abstract class CorleyObject : IDisposable {
         Id = 0;
         Name = "New CorelyObject";
         Position = position;
+        Rotation = 0f;
+        Scale = new Vector2(1f, 1f);
         InternalStart();
     }
 
