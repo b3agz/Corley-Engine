@@ -33,11 +33,11 @@ public abstract class VisualObject : CorleyObject {
     }
 
     protected override void OnSubscribeToDraw() {
-        EngineEvents.OnDraw += InternalDraw;
+        RenderManager.Register(this);
     }
 
     protected override void OnUnsubscribeFromDraw() {
-        EngineEvents.OnDraw -= InternalDraw;
+        RenderManager.Unregister(this);
     }
 
     private Texture2D? LoadTextureSafe(string path) {
@@ -48,6 +48,10 @@ public abstract class VisualObject : CorleyObject {
             CorleyLog.LogWarning($"Failed to load texture at {path}");
             return null;
         }
+    }
+
+    public void OnDraw() {
+        InternalDraw();
     }
 
     private void InternalDraw() {

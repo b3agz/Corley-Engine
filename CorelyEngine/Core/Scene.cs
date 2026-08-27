@@ -31,7 +31,13 @@ public class Scene(string name, Camera2D camera) : IDisposable {
 
     public void Init() {
 
+        Actor test = new("./Sprites/default_character.png", new(90, 110));
+
+        _objectsInScene.Add(test);
         _objectsInScene.Add(Player);
+
+        test.Depth = 2;
+        Player.Depth = 1;
 
     }
 

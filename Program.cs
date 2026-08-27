@@ -87,7 +87,7 @@ class Program {
             Raylib.BeginMode2D(camera);
 
             // Trigger all active render objects.
-            EngineEvents.TickDraw();
+            RenderManager.DrawAll();
 
             Raylib.EndMode2D();
 
