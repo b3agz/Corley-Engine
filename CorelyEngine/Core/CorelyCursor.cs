@@ -30,9 +30,10 @@ public class CorelyCursor {
 
     public void Draw(Vector2 rawMousePos, float windowScale) {
 
+        // Calculate position of mouse in window, make sure it's rounded to avoid pixel shimmering.
         Vector2 drawPos = new(
-            rawMousePos.X - (_hotspot.X * windowScale),
-            rawMousePos.Y - (_hotspot.Y * windowScale)
+            MathF.Round(rawMousePos.X - (_hotspot.X * windowScale)),
+            MathF.Round(rawMousePos.Y - (_hotspot.Y * windowScale))
         );
 
         Raylib.DrawTextureEx(_texture, drawPos, 0f, windowScale, Color.White);

@@ -9,7 +9,21 @@ public abstract class CorleyObject : IDisposable {
 
     public readonly uint Id;
     public string Name { get; set; }
-    public Vector2 Position { get; set; }
+
+    private Vector2 _position;
+
+    /// <summary>
+    /// The position of the object in the game world. Because we are working with pixels,
+    /// and because we can't draw half-pixels, this value is automatically rounded to the
+    /// nearest whole numbers when set.
+    /// </summary>
+    public Vector2 Position {
+        get => _position;
+        set {
+            _position = new(MathF.Round(value.X), MathF.Round(value.Y));
+        }
+    }
+
     public Vector2 Scale { get; set; } = new (1f, 1f);
     public float Rotation { get; set; } = 0f;
     public uint Depth { get; set; } = 0;

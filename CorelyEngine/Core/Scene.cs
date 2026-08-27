@@ -11,6 +11,8 @@ public class Scene(string name, Camera2D camera) : IDisposable {
     /// </summary>
     public string Name { get; private set; } = name;
 
+    public Color BackgroundColour { get; private set; } = Color.DarkGray;
+
     /// <summary>
     /// The camera used to view this scene through.
     /// </summary>

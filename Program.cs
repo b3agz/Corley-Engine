@@ -82,7 +82,7 @@ class Program {
 
             // Draw everything to the render texture.
             Raylib.BeginTextureMode(target);
-            Raylib.ClearBackground(Color.Black);
+            Raylib.ClearBackground(_activeScene.BackgroundColour);
 
             Raylib.BeginMode2D(camera);
 
@@ -90,17 +90,6 @@ class Program {
             EngineEvents.TickDraw();
 
             Raylib.EndMode2D();
-
-            // TEST STUFF
-            // In the fullness of time, we won't be drawing anything directly in here, this part of the code is just for showing something at this stage of dev.
-            Raylib.DrawText("RENDER TEXTURE UI LAYER", 20, 20, 20, Color.RayWhite);
-            Raylib.DrawText(
-                $"Virtual Mouse: {virtualMouse.X}x{virtualMouse.Y}",
-                (int)virtualMouse.X + 20,
-                (int)virtualMouse.Y + 20,
-                20,
-                Color.Green
-            );
 
             // Draw the cursor unclamped so it looks natural if the user moves the cursor out of the game area.
             Vector2 virtualMouseUnclamped = new(virtualX, virtualY);
