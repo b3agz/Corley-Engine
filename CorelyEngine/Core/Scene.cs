@@ -1,3 +1,4 @@
+using System.Numerics;
 using System.Collections.Generic;
 using Raylib_cs;
 
@@ -21,9 +22,9 @@ public class Scene(string name, Camera2D camera) : IDisposable {
     private List<CorleyObject> _objectsInScene = [];
 
     public void Init() {
-        
-        Actor actor = new Actor();
-        actor.Position = new (100, 100);
+
+        // TODO: This would be loaded from file but for now we just need to see things on the screen.
+        Actor actor = new Actor("./Sprites/default_character.png", new (100, 100));
         _objectsInScene.Add(actor);
 
     }

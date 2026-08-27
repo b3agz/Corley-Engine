@@ -20,6 +20,8 @@ class Program {
 
         CorleyLog.LogInfo($"Initialising Corley Engine...");
 
+        Raylib.SetTraceLogLevel(TraceLogLevel.Warning);
+
         // Initialisation stuff.
         Raylib.SetConfigFlags(ConfigFlags.ResizableWindow | ConfigFlags.VSyncHint);
         Raylib.SetTargetFPS(60);
@@ -38,7 +40,7 @@ class Program {
             Zoom = 1.0f
         };
 
-        Scene _activeScene = new Scene("Test Scene", camera);
+        Scene _activeScene = new ("Test Scene", camera);
         _activeScene.Init();
 
         // Initialize Cursor and hide the system cursor

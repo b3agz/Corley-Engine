@@ -1,3 +1,4 @@
+namespace CorleyEngine.Core;
 
 /// <summary>
 /// Any variables that are fundamental to the engine and should never be changed
@@ -8,11 +9,11 @@ public static class EngineConstants {
     /// <summary>
     /// The width of the game in pixels (different to window size).
     /// </summary>
-    public const int RESOLUTION_WIDTH = 320;
+    public const int RESOLUTION_WIDTH = 640;
 
     /// <summary>
     /// The height of the game in pixels (different to window size).
     /// </summary>
-    public const int RESOLUTION_HEIGHT = 240;
+    public const int RESOLUTION_HEIGHT = 360;
 
 }
