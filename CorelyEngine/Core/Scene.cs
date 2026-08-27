@@ -33,12 +33,26 @@ public class Scene(string name, Camera2D camera) : IDisposable {
 
         Actor test = new("./Sprites/default_character.png", new(90, 110));
 
-        _objectsInScene.Add(test);
-        _objectsInScene.Add(Player);
+        AddObject(test);
+        AddObject(Player);
 
         test.Depth = 2;
         Player.Depth = 1;
 
+    }
+
+    /// <summary>
+    /// Adds a CorleyObject to the scene.
+    /// </summary>
+    public void AddObject(CorleyObject obj) {
+        _objectsInScene.Add(obj);
+    }
+
+    /// <summary>
+    /// Removes a CorleyObject from the scene.
+    /// </summary>
+    public void RemoveObject(CorleyObject obj) {
+        _objectsInScene.Remove(obj);
     }
 
     public void Dispose() { }

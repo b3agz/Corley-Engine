@@ -40,8 +40,9 @@ class Program {
             Zoom = 1.0f
         };
 
-        Scene _activeScene = new ("Test Scene", camera);
-        _activeScene.Init();
+        Scene activeScene = new ("Test Scene", camera);
+        SceneManager.ActiveScene = activeScene;
+        activeScene.Init();
 
         // Initialize Cursor and hide the system cursor
         CorelyCursor cursor = new();
@@ -82,7 +83,7 @@ class Program {
 
             // Draw everything to the render texture.
             Raylib.BeginTextureMode(target);
-            Raylib.ClearBackground(_activeScene.BackgroundColour);
+            Raylib.ClearBackground(SceneManager.ActiveScene.BackgroundColour);
 
             Raylib.BeginMode2D(camera);
 
