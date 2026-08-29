@@ -19,6 +19,8 @@ public class TestGame : CorleyEngine.Core.Game {
     }
 
     protected override void OnUpdate(float deltaTime) {
+
+        // TEMP CODE FOR TESTING
         float moveSpeed = 200f;
         float rotSpeed = 30f;
         float zoomSpeed = 1f;
@@ -33,5 +35,10 @@ public class TestGame : CorleyEngine.Core.Game {
 
         if (Input.IsKeyDown(KeyboardKey.T)) _camera.Zoom += zoomSpeed * deltaTime;
         if (Input.IsKeyDown(KeyboardKey.G)) _camera.Zoom -= zoomSpeed * deltaTime;
+
+        if (Input.IsMouseButtonDown(MouseButton.Left)) {
+            Console.WriteLine(SceneManager.ActiveScene.Camera.ScreenToWorld(Input.GetVirtualMousePosition()));
+        }
+        // END OF TEMP CODE
     }
 }

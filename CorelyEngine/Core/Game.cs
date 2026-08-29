@@ -79,7 +79,8 @@ public abstract class Game {
             float offsetY = (Raylib.GetScreenHeight() - (EngineConstants.RESOLUTION_HEIGHT * scale)) * 0.5f;
 
             // Mapping mouse
-            Vector2 virtualMouse = Input.GetMousePositionGameSpace();
+            Vector2 virtualMouse = Input.GetVirtualMousePosition();
+            Vector2 worldMouse = _camera.ScreenToWorld(virtualMouse);
 
             // Draw to texture
             Raylib.BeginTextureMode(_target);
@@ -90,7 +91,7 @@ public abstract class Game {
             
             Raylib.EndMode2D();
             
-            _cursor.Draw(Input.GetMousePositionGameSpaceUnclamped(), 1.0f);
+            _cursor.Draw(Input.GetVirtualMousePositionUnclamped(), 1.0f);
             Raylib.EndTextureMode();
 
             // Draw to window
