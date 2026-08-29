@@ -6,37 +6,39 @@ namespace CorleyEngine.UI;
 
 public class TextObject : RenderableObject {
 
-    protected Font? _font;
-    private readonly string _fontPath;
+    /// <summary>
+    /// Relative path to our default font.
+    /// </summary>
+    private const string FONT_PATH = "./CorelyEngine/Assets/Fonts/Pixelzone.png";
+
+    protected Font _font;
     public string Text { get; set; } = "";
-    public float FontSize { get; set; } = 20f;
+    public FontSize FontSize { get; set; } = FontSize.Regular;
 
     /// <summary>
     /// Constructs a new VisualObject.
     /// </summary>
-    /// <param name="fontPath">The path to the texture.</param>
-    public TextObject(string fontPath) : base() {
-        _fontPath = fontPath;
-        _font = LoadFontSafe(fontPath);
+    public TextObject(FontSize fontSize = FontSize.Regular) : base() {
+        _font = LoadFontSafe(FONT_PATH);
+        FontSize = fontSize;
     }
 
     /// <summary>
     /// Constructs a new VisualObject at a specific position.
     /// </summary>
     /// <param name="fontPath">The path to the texture.</param>
-    /// <param name="position">The position of the object.</param>
-    public TextObject(string fontPath, Vector2 position) : base(position) {
-        _fontPath = fontPath;
-        _font = LoadFontSafe(fontPath);
+    public TextObject(Vector2 position, FontSize fontSize = FontSize.Regular) : base(position) {
+        _font = LoadFontSafe(FONT_PATH);
+        FontSize = fontSize;
     }
 
-    private Font? LoadFontSafe(string path) {
+    private Font LoadFontSafe(string path) {
         try {
             return Assets.LoadFont(path);
         }
         catch (Exception) {
-            CorleyLog.LogWarning($"Failed to load font at {path}");
-            return null;
+            CorleyLog.LogWarning($"Failed to load font at {path}, defaulting to Raylib font.");
+            return Raylib.GetFontDefault();
         }
     }
 
@@ -46,14 +48,8 @@ public class TextObject : RenderableObject {
 
     private void InternalDraw() {
 
-        // Draw the image to the screen. If the image was never found, draw an eye-searing magenta square
-        // so we know it went wrong.
-        if (_font.HasValue) {
-            Raylib.DrawTextEx(_font.Value, Text, Position, FontSize, 1f, Color.White);
-        }
-        else {
-            Raylib.DrawRectanglePro(new Rectangle(Position.X, Position.Y, 32 * Scale.X, 32 * Scale.Y), Vector2.Zero, Rotation, Color.Magenta);
-        }
+        Raylib.DrawTextPro(_font, Text, Position, Vector2.Zero, Rotation, (int)FontSize, 1f, Color.White);
+
     }
 
 }

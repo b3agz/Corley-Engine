@@ -39,9 +39,8 @@ public class Scene(string name, Camera2D camera) : IDisposable {
         AddObject(test);
         AddObject(Player);
 
-        TextObject text = new("./CorelyEngine/Assets/Fonts/Pixelzone.png", new(200, 100));
+        TextObject text = new(new Vector2(200, 100), FontSize.Regular);
         text.Text = "Testing Tickles";
-        //text.Scale = new(0.5f, 0.5f);
         AddObject(text);
 
     }
