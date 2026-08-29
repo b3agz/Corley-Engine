@@ -64,13 +64,13 @@ public static class RenderManager {
     /// <param name="foundObjects">The list of objects found at the point.</param>
     /// <returns>True if any objects were found, false otherwise.</returns>
     public static bool GetObjectsAtPoint(Vector2 point, out List<RenderableObject> foundObjects) {
-        if (_isDirty) {
-            _sortedObjects = _visualObjects.OrderBy(o => o.Depth).ToList();
-            _isDirty = false;
-        }
 
-        foundObjects = new();
-        foreach (var obj in _sortedObjects) {
+        foundObjects = [];
+
+        // Sort descending to ensure the object at the start of the list (index 0) is the one "on top".
+        var sortedObjects = _visualObjects.OrderByDescending(o => o.Depth);
+
+        foreach (var obj in sortedObjects) {
             if (obj.IsPointInside(point)) {
                 foundObjects.Add(obj);
             }
@@ -85,12 +85,10 @@ public static class RenderManager {
     /// <param name="foundObject">The object found at the point, if any.</param>
     /// <returns>True if an object was found, false otherwise.</returns>
     public static bool GetObjectAtPoint(Vector2 point, out RenderableObject? foundObject) {
-        if (_isDirty) {
-            _sortedObjects = _visualObjects.OrderBy(o => o.Depth).ToList();
-            _isDirty = false;
-        }
 
-        foreach (var obj in _sortedObjects) {
+        var sortedObjects = _visualObjects.OrderByDescending(o => o.Depth);
+
+        foreach (var obj in sortedObjects) {
             if (obj.IsPointInside(point)) {
                 foundObject = obj;
                 return true;

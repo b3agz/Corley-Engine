@@ -22,7 +22,7 @@ public class Scene(string name, Camera camera) : IDisposable {
     /// <summary>
     /// The actual player. This gets its own special property because of how important the player is.
     /// </summary>
-    public Player Player { get; private set; } = new("./CorelyEngine/Assets/Sprites/default_character.png", new(100, 100));
+    public Player Player { get; private set; } = new("./CorelyEngine/Assets/Sprites/default_character.png", new(-100, -40));
     // TODO: This would be loaded from file but for now we just need to see things on the screen.
 
     /// <summary>
@@ -32,14 +32,14 @@ public class Scene(string name, Camera camera) : IDisposable {
 
     public void Init() {
 
-        //AddObject(new ProceduralBackground());
+        AddObject(new ProceduralBackground());
 
-        Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(490, 110));
+        Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(0, -40));
         test.Colour = Color.Pink;
         test.FlipX = true;
         test.HintText = "Frank";
 
-        Actor test2 = new("./CorelyEngine/Assets/Sprites/default_character.png", new(250, 200));
+        Actor test2 = new("./CorelyEngine/Assets/Sprites/default_character.png", new(100, 0));
         test2.Colour = Color.Green;
         test2.FlipY = true;
         test2.HintText = "Jim";
@@ -47,7 +47,7 @@ public class Scene(string name, Camera camera) : IDisposable {
         AddObject(test);
         AddObject(Player);
 
-        TextObject text = new(new Vector2(200, 100), FontSize.Large, false);
+        TextObject text = new(new Vector2(-100, -100), FontSize.Large, false);
         text.Text = "Testing Tickles";
         text.Colour = Color.DarkBlue;
         AddObject(text);

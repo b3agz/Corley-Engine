@@ -25,34 +25,48 @@ namespace CorleyEngine.UI;
             base.OnUpdate(deltaTime);
 
             // Get world position to check for objects
-            Vector2 worldMousePosition = SceneManager.ActiveScene.Camera.ScreenToWorld(Input.GetVirtualMousePosition());
+            Vector2 mouseVirtualPos = Input.GetVirtualMousePosition();
+            Vector2 worldMousePosition = SceneManager.ActiveScene.Camera.ScreenToWorld(mouseVirtualPos);
 
-            if (RenderManager.GetObjectAtPoint(worldMousePosition, out RenderableObject? foundObject) && foundObject != null && !string.IsNullOrEmpty(foundObject.HintText)) {
+            if (RenderManager.GetObjectsAtPoint(worldMousePosition, out List<RenderableObject> foundObjects)) {
 
-                Vector2 objectSize = foundObject.GetSize();
+                RenderableObject? foundObject = null;
+                foreach (var obj in foundObjects) {
+                    if (!string.IsNullOrEmpty(obj.HintText)) {
+                        foundObject = obj;
+                        break;
+                    }
+                }
 
-                // Position above the object, centered horizontally
-                // Convert object position to screen space to account for camera
-                Vector2 screenObjectPosition = SceneManager.ActiveScene.Camera.WorldToScreen(foundObject.Position);
+                if (foundObject != null) {
+                    Vector2 objectSize = foundObject.GetSize();
 
-                Vector2 targetPosition = new Vector2(
-                    screenObjectPosition.X + (objectSize.X / 2),
-                    screenObjectPosition.Y - 2
-                );
+                    // Position above the object, centered horizontally
+                    // Convert object position to screen space to account for camera
+                    Vector2 screenObjectPosition = SceneManager.ActiveScene.Camera.WorldToScreen(foundObject.Position);
 
-                // Calculate text size for centering and clamping
-                Vector2 textSize = Raylib.MeasureTextEx(_font, foundObject.HintText, (int)FontSize, 1f);
+                    Vector2 targetPosition = new Vector2(
+                        screenObjectPosition.X + (objectSize.X / 2),
+                        screenObjectPosition.Y - 2
+                    );
 
-                // Adjust target to center the hint text
-                targetPosition.X -= (textSize.X / 2);
-                targetPosition.Y -= textSize.Y;
+                    // Calculate text size for centering and clamping
+                    Vector2 textSize = Raylib.MeasureTextEx(_font, foundObject.HintText, (int)FontSize, 1f);
 
-                // Clamp to screen bounds
-                float clampedX = Math.Clamp(targetPosition.X, 0, EngineConstants.RESOLUTION_WIDTH - textSize.X);
-                float clampedY = Math.Clamp(targetPosition.Y, 0, EngineConstants.RESOLUTION_HEIGHT - textSize.Y);
+                    // Adjust target to center the hint text
+                    targetPosition.X -= (textSize.X / 2);
+                    targetPosition.Y -= textSize.Y;
 
-                Position = new Vector2(clampedX, clampedY);
-                Text = foundObject.HintText;
+                    // Clamp to screen bounds
+                    float clampedX = Math.Clamp(targetPosition.X, 0, EngineConstants.RESOLUTION_WIDTH - textSize.X);
+                    float clampedY = Math.Clamp(targetPosition.Y, 0, EngineConstants.RESOLUTION_HEIGHT - textSize.Y);
+
+                    Position = new Vector2(clampedX, clampedY);
+                    Text = foundObject.HintText;
+                }
+                else {
+                    Text = "";
+                }
             }
             else {
                 Text = "";

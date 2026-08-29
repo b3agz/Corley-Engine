@@ -13,7 +13,7 @@ public class Camera {
     public Camera() {
         _camera2D = new Camera2D {
             Target = Vector2.Zero,
-            Offset = Vector2.Zero,
+            Offset = new Vector2(EngineConstants.RESOLUTION_WIDTH / 2f, EngineConstants.RESOLUTION_HEIGHT / 2f),
             Rotation = 0.0f,
             Zoom = 1.0f
         };
