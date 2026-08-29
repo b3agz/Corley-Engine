@@ -34,7 +34,9 @@ public class Scene(string name, Camera camera) : IDisposable {
 
         AddObject(new ProceduralBackground());
 
-        Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(90, 110));
+        Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(490, 110));
+        test.Colour = Color.Pink;
+        test.FlipX = true;
 
         AddObject(test);
         AddObject(Player);
