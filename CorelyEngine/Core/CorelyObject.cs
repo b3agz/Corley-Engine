@@ -8,7 +8,7 @@ namespace CorleyEngine.Core;
 public abstract class CorleyObject : IDisposable {
 
     public readonly uint Id;
-    public string Name { get; set; }
+    public virtual string Name { get; set; }
     public bool IsEnabled { get; private set; } = true;
 
     protected CorleyObject() {

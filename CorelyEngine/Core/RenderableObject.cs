@@ -84,4 +84,11 @@ public abstract class RenderableObject : CorleyObject {
     /// Draws the object.
     /// </summary>
     public abstract void OnDraw();
+
+    /// <summary>
+    /// Checks if a point is within the bounds of the object.
+    /// </summary>
+    /// <param name="point">The point to check.</param>
+    /// <returns>True if the point is within the bounds, false otherwise.</returns>
+    public abstract bool IsPointInside(Vector2 point);
 }

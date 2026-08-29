@@ -36,8 +36,11 @@ public class TestGame : CorleyEngine.Core.Game {
         if (Input.IsKeyDown(KeyboardKey.T)) _camera.Zoom += zoomSpeed * deltaTime;
         if (Input.IsKeyDown(KeyboardKey.G)) _camera.Zoom -= zoomSpeed * deltaTime;
 
-        if (Input.IsMouseButtonDown(MouseButton.Left)) {
-            Console.WriteLine(SceneManager.ActiveScene.Camera.ScreenToWorld(Input.GetVirtualMousePosition()));
+        if (Input.IsMouseButtonReleased(MouseButton.Left)) {
+            if (RenderManager.GetObjectsAtPoint(SceneManager.ActiveScene.Camera.ScreenToWorld(Input.GetVirtualMousePosition()), out List<RenderableObject> objectsAtClick)) {
+                foreach(RenderableObject obj in objectsAtClick)
+                    Console.WriteLine(obj.Name);
+            }
         }
         // END OF TEMP CODE
     }

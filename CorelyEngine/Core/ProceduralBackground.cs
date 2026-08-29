@@ -1,4 +1,5 @@
 using Raylib_cs;
+using System.Numerics;
 using CorleyEngine.Core;
 
 namespace CorleyEngine.Core;
@@ -13,6 +14,7 @@ public class ProceduralBackground : RenderableObject {
     /// Initializes a new instance of the <see cref="ProceduralBackground"/> class.
     /// </summary>
     public ProceduralBackground() : base() {
+        Name = "Procedural Background";
         Depth = 0; // Ensures it is drawn first (lowest depth)
     }
 
@@ -28,5 +30,15 @@ public class ProceduralBackground : RenderableObject {
 
         // Draw bottom half grey
         Raylib.DrawRectangle(0, height / 2, width, height / 2, Color.Gray);
+    }
+
+    /// <summary>
+    /// Checks if a point is within the bounds of the background.
+    /// </summary>
+    /// <param name="point">The point to check.</param>
+    /// <returns>True if the point is within the bounds, false otherwise.</returns>
+    public override bool IsPointInside(Vector2 point) {
+        return point.X >= 0 && point.X <= EngineConstants.RESOLUTION_WIDTH &&
+               point.Y >= 0 && point.Y <= EngineConstants.RESOLUTION_HEIGHT;
     }
 }

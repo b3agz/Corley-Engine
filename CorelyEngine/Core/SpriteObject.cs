@@ -18,6 +18,7 @@ public abstract class SpriteObject : RenderableObject {
     /// </summary>
     /// <param name="texturePath">The path to the texture.</param>
     public SpriteObject(string texturePath) : base() {
+        Name = "SpriteObject";
         _texturePath = texturePath;
         _texture = LoadTextureSafe(texturePath);
     }
@@ -28,6 +29,7 @@ public abstract class SpriteObject : RenderableObject {
     /// <param name="texturePath">The path to the texture.</param>
     /// <param name="position">The position of the object.</param>
     public SpriteObject(string texturePath, Vector2 position) : base(position) {
+        Name = "SpriteObject";
         _texturePath = texturePath;
         _texture = LoadTextureSafe(texturePath);
     }
@@ -44,6 +46,22 @@ public abstract class SpriteObject : RenderableObject {
 
     public override void OnDraw() {
         InternalDraw();
+    }
+
+    /// <summary>
+    /// Checks if a point is within the bounds of the sprite.
+    /// </summary>
+    /// <param name="point">The point to check.</param>
+    /// <returns>True if the point is within the bounds, false otherwise.</returns>
+    public override bool IsPointInside(Vector2 point) {
+        if (_texture.HasValue && _texture.Value.Id != 0) {
+            float width = _texture.Value.Width * Scale.X;
+            float height = _texture.Value.Height * Scale.Y;
+            // TODO: Account for rotation
+            return point.X >= Position.X && point.X <= Position.X + width &&
+                   point.Y >= Position.Y && point.Y <= Position.Y + height;
+        }
+        return false;
     }
 
     private void InternalDraw() {

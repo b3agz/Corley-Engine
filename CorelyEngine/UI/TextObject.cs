@@ -11,6 +11,8 @@ public class TextObject : RenderableObject {
     /// </summary>
     private const string FONT_PATH = "./CorelyEngine/Assets/Fonts/Pixelzone.png";
 
+    public override string Name => $"TextObject \"{Text}\"";
+
     protected Font _font;
     public string Text { get; set; } = "";
     public FontSize FontSize { get; set; } = FontSize.Regular;
@@ -45,6 +47,18 @@ public class TextObject : RenderableObject {
 
     public override void OnDraw() {
         InternalDraw();
+    }
+
+    /// <summary>
+    /// Checks if a point is within the bounds of the text.
+    /// </summary>
+    /// <param name="point">The point to check.</param>
+    /// <returns>True if the point is within the bounds, false otherwise.</returns>
+    public override bool IsPointInside(Vector2 point) {
+        Vector2 size = Raylib.MeasureTextEx(_font, Text, (int)FontSize, 1f);
+        // TODO: Account for rotation
+        return point.X >= Position.X && point.X <= Position.X + size.X &&
+               point.Y >= Position.Y && point.Y <= Position.Y + size.Y;
     }
 
     private void InternalDraw() {
