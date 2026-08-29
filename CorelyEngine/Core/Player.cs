@@ -5,7 +5,7 @@ namespace CorleyEngine.Core;
 /// <summary>
 /// The actual player object.
 /// </summary>
-public class Player : VisualObject {
+public class Player : SpriteObject {
 
     public Player(string texturePath, Vector2 position) : base(texturePath, position) {
     }

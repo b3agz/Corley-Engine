@@ -19,6 +19,21 @@ public static class Assets {
     /// </summary>
     /// <param name="path">The path to the texture file.</param>
     /// <returns>The loaded texture.</returns>
+    public static Font LoadFont(string path) {
+        if (_loadedAssets.TryGetValue(path, out var asset)) {
+            return (Font)asset;
+        }
+
+        Font font = Raylib.LoadFont(path);
+        _loadedAssets[path] = font;
+        return font;
+    }
+
+    /// <summary>
+    /// Loads or retrieves a texture.
+    /// </summary>
+    /// <param name="path">The path to the texture file.</param>
+    /// <returns>The loaded texture.</returns>
     public static Texture2D LoadTexture(string path) {
         if (_loadedAssets.TryGetValue(path, out var asset)) {
             return (Texture2D)asset;

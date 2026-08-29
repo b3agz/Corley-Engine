@@ -50,6 +50,10 @@ class Program {
 
         CorleyLog.LogInfo("Initialisation complete, starting game loop.");
 
+        CorleyEngine.UI.TextObject text = new("./CorelyEngine/Assets/Fonts/Pixelzone.png", new(200, 100));
+        text.Text = "Testing Tickles";
+        SceneManager.ActiveScene.AddObject(text);
+
         // The core engine loop. Everything that happens during the game originates in this while loop.
         while (!Raylib.WindowShouldClose()) {
 
@@ -89,6 +93,8 @@ class Program {
 
             // Trigger all active render objects.
             RenderManager.DrawAll();
+
+            text.OnDraw();
 
             Raylib.EndMode2D();
 

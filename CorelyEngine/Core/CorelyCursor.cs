@@ -10,7 +10,7 @@ public class CorelyCursor {
 
     // Primary constructor using a file path
     public CorelyCursor() {
-        _texture = Assets.LoadTexture("./Sprites/default_cursor.png");
+        _texture = Assets.LoadTexture("./CorelyEngine/Assets/Sprites/default_cursor.png");
         Raylib.SetTextureFilter(_texture, TextureFilter.Point);
         _hotspot = new (2, 2);
         Raylib.HideCursor();

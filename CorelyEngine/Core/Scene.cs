@@ -21,7 +21,7 @@ public class Scene(string name, Camera2D camera) : IDisposable {
     /// <summary>
     /// The actual player. This gets its own special property because of how important the player is.
     /// </summary>
-    public Player Player { get; private set; } = new("./Sprites/default_character.png", new(100, 100));
+    public Player Player { get; private set; } = new("./CorelyEngine/Assets/Sprites/default_character.png", new(100, 100));
     // TODO: This would be loaded from file but for now we just need to see things on the screen.
 
     /// <summary>
@@ -31,7 +31,9 @@ public class Scene(string name, Camera2D camera) : IDisposable {
 
     public void Init() {
 
-        Actor test = new("./Sprites/default_character.png", new(90, 110));
+        Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(90, 110));
+
+
 
         AddObject(test);
         AddObject(Player);

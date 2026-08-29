@@ -8,7 +8,7 @@ namespace CorleyEngine.Core;
 /// <summary>
 /// A base class for objects that have a visual presence in the scene.
 /// </summary>
-public abstract class VisualObject : CorleyObject {
+public abstract class SpriteObject : CorleyObject {
 
     protected Texture2D? _texture;
     private readonly string _texturePath;
@@ -17,7 +17,7 @@ public abstract class VisualObject : CorleyObject {
     /// Constructs a new VisualObject.
     /// </summary>
     /// <param name="texturePath">The path to the texture.</param>
-    public VisualObject(string texturePath) : base() {
+    public SpriteObject(string texturePath) : base() {
         _texturePath = texturePath;
         _texture = LoadTextureSafe(texturePath);
     }
@@ -27,7 +27,7 @@ public abstract class VisualObject : CorleyObject {
     /// </summary>
     /// <param name="texturePath">The path to the texture.</param>
     /// <param name="position">The position of the object.</param>
-    public VisualObject(string texturePath, Vector2 position) : base(position) {
+    public SpriteObject(string texturePath, Vector2 position) : base(position) {
         _texturePath = texturePath;
         _texture = LoadTextureSafe(texturePath);
     }
@@ -61,7 +61,7 @@ public abstract class VisualObject : CorleyObject {
         if (_texture.HasValue && _texture.Value.Id != 0) {
             Rectangle sourceRec = new(0, 0, _texture.Value.Width, _texture.Value.Height);
             Rectangle destRec = new(Position.X, Position.Y, _texture.Value.Width * Scale.X, _texture.Value.Height * Scale.Y);
-            
+
             // Draw using origin at 0,0 to match Position as top-left corner
             Raylib.DrawTexturePro(_texture.Value, sourceRec, destRec, Vector2.Zero, Rotation, Color.White);
         }
