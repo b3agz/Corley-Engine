@@ -1,6 +1,7 @@
 using System.Numerics;
 using System.Collections.Generic;
 using Raylib_cs;
+using CorleyEngine.UI;
 
 namespace CorleyEngine.Core;
 
@@ -33,13 +34,12 @@ public class Scene(string name, Camera2D camera) : IDisposable {
 
         Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(90, 110));
 
-
-
         AddObject(test);
         AddObject(Player);
 
-        test.Depth = 2;
-        Player.Depth = 1;
+        TextObject text = new("./CorelyEngine/Assets/Fonts/Pixelzone.png", new(200, 100));
+        text.Text = "Testing Tickles";
+        AddObject(text);
 
     }
 

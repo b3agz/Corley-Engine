@@ -10,16 +10,11 @@ public class TestGame : CorleyEngine.Core.Game {
         _camera.Offset = Vector2.Zero;
         _camera.Rotation = 0.0f;
         _camera.Zoom = 1.0f;
-
-        Scene activeScene = new ("Test Scene", _camera);
-        SceneManager.ActiveScene = activeScene;
-        activeScene.Init();
     }
 
     protected override void OnLoadContent() {
-        TextObject text = new("./CorelyEngine/Assets/Fonts/Pixelzone.png", new(200, 100));
-        text.Text = "Testing Tickles";
-        SceneManager.ActiveScene.AddObject(text);
+        SceneManager.ActiveScene = new("Test Scene", _camera);
+        SceneManager.ActiveScene.Init();
     }
 
     protected override void OnUpdate(float deltaTime) {
