@@ -14,6 +14,11 @@ public static class RenderManager {
     private static bool _isDirty = true;
 
     /// <summary>
+    /// Returns whether the RenderManager is currently dirty and needs the render list ordering.
+    /// </summary>
+    public static bool IsDirty => _isDirty;
+
+    /// <summary>
     /// Called when a something has been changed that necessitates a sorting of the render list.
     /// </summary>
     public static void SetDirty() => _isDirty = true;
