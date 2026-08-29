@@ -1,9 +1,0 @@
-{
-  "ProjectName": "Sample Project",
-  "Version": "0.1.0",
-  "Scenes": {
-    "TestLevel": "TestLevel.corleyscene"
-  },
-  "DefaultScene": "TestLevel",
-  "AssetDirectoryName": "Assets"
-}
