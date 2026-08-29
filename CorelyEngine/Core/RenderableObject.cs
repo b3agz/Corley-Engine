@@ -44,6 +44,11 @@ public abstract class RenderableObject : CorleyObject {
         }
     }
 
+    /// <summary>
+    /// The text that shows up when <see cref="HintObject"/> is over this object.
+    /// </summary>
+    public string HintText = "";
+
     protected RenderableObject(bool isUI = false) : base() {
         _isUI = isUI;
         AddToRenderer();
@@ -91,4 +96,10 @@ public abstract class RenderableObject : CorleyObject {
     /// <param name="point">The point to check.</param>
     /// <returns>True if the point is within the bounds, false otherwise.</returns>
     public abstract bool IsPointInside(Vector2 point);
+
+    /// <summary>
+    /// Gets the size of the object.
+    /// </summary>
+    /// <returns>The size of the object.</returns>
+    public abstract Vector2 GetSize();
 }

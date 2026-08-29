@@ -61,6 +61,14 @@ public class TextObject : RenderableObject {
                point.Y >= Position.Y && point.Y <= Position.Y + size.Y;
     }
 
+    /// <summary>
+    /// Gets the size of the text.
+    /// </summary>
+    /// <returns>The size of the text.</returns>
+    public override Vector2 GetSize() {
+        return Raylib.MeasureTextEx(_font, Text, (int)FontSize, 1f);
+    }
+
     private void InternalDraw() {
 
         Raylib.DrawTextPro(_font, Text, Position, Vector2.Zero, Rotation, (int)FontSize, 1f, Colour);

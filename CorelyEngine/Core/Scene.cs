@@ -32,11 +32,17 @@ public class Scene(string name, Camera camera) : IDisposable {
 
     public void Init() {
 
-        AddObject(new ProceduralBackground());
+        //AddObject(new ProceduralBackground());
 
         Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(490, 110));
         test.Colour = Color.Pink;
         test.FlipX = true;
+        test.HintText = "Frank";
+
+        Actor test2 = new("./CorelyEngine/Assets/Sprites/default_character.png", new(250, 200));
+        test2.Colour = Color.Green;
+        test2.FlipY = true;
+        test2.HintText = "Jim";
 
         AddObject(test);
         AddObject(Player);
@@ -45,6 +51,8 @@ public class Scene(string name, Camera camera) : IDisposable {
         text.Text = "Testing Tickles";
         text.Colour = Color.DarkBlue;
         AddObject(text);
+
+        AddObject(new HintObject());
 
         TextObject uitext = new(new Vector2(10, 10), FontSize.Regular);
         uitext.Text = "UI Text Stuff";

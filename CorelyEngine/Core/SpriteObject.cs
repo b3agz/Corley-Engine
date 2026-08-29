@@ -95,6 +95,17 @@ public abstract class SpriteObject : RenderableObject {
         return false;
     }
 
+    /// <summary>
+    /// Gets the size of the sprite.
+    /// </summary>
+    /// <returns>The size of the sprite.</returns>
+    public override Vector2 GetSize() {
+        if (_texture.HasValue && _texture.Value.Id != 0) {
+            return new Vector2(_texture.Value.Width * Scale.X, _texture.Value.Height * Scale.Y);
+        }
+        return Vector2.Zero;
+    }
+
     private void InternalDraw() {
 
         // Draw the image to the screen. If the image was never found, draw an eye-searing magenta square

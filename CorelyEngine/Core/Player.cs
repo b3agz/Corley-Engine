@@ -9,6 +9,7 @@ public class Player : SpriteObject {
 
     public Player(string texturePath, Vector2 position) : base(texturePath, position) {
         Name = "PlayerObject";
+        HintText = "The Player (You)";
     }
 
 }

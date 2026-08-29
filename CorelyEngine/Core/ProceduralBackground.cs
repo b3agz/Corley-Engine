@@ -41,4 +41,12 @@ public class ProceduralBackground : RenderableObject {
         return point.X >= 0 && point.X <= EngineConstants.RESOLUTION_WIDTH &&
                point.Y >= 0 && point.Y <= EngineConstants.RESOLUTION_HEIGHT;
     }
+
+    /// <summary>
+    /// Gets the size of the background (the full screen resolution).
+    /// </summary>
+    /// <returns>The size of the background.</returns>
+    public override Vector2 GetSize() {
+        return new Vector2(EngineConstants.RESOLUTION_WIDTH, EngineConstants.RESOLUTION_HEIGHT);
+    }
 }

@@ -42,6 +42,15 @@ public class Camera {
     public Camera2D GetRaylibCamera() => _camera2D;
 
     /// <summary>
+    /// Translates a position from the world space to the game's virtual window space.
+    /// </summary>
+    /// <param name="worldPosition">The position in world space.</param>
+    /// <returns>The position in virtual window space.</returns>
+    public Vector2 WorldToScreen(Vector2 worldPosition) {
+        return Raylib.GetWorldToScreen2D(worldPosition, _camera2D);
+    }
+
+    /// <summary>
     /// Translates a position from the game's virtual window space to the world space.
     /// </summary>
     /// <param name="virtualPosition">The position in virtual window space.</param>
