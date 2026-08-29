@@ -32,6 +32,8 @@ public class Scene(string name, Camera2D camera) : IDisposable {
 
     public void Init() {
 
+        AddObject(new ProceduralBackground());
+
         Actor test = new("./CorelyEngine/Assets/Sprites/default_character.png", new(90, 110));
 
         AddObject(test);
@@ -39,6 +41,7 @@ public class Scene(string name, Camera2D camera) : IDisposable {
 
         TextObject text = new("./CorelyEngine/Assets/Fonts/Pixelzone.png", new(200, 100));
         text.Text = "Testing Tickles";
+        //text.Scale = new(0.5f, 0.5f);
         AddObject(text);
 
     }

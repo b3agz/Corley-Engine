@@ -26,7 +26,7 @@ public abstract class RenderableObject : CorleyObject {
     public Vector2 Scale { get; set; } = new(1f, 1f);
     public float Rotation { get; set; } = 0f;
 
-    private uint _depth = 0;
+    private uint _depth = 100;
 
     /// <summary>
     /// The depth or sorting order of this object. Modifying this value automatically calls <see cref="RenderManager.SetDirty();"/>
