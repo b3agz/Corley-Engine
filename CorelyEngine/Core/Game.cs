@@ -86,11 +86,12 @@ public abstract class Game {
             Raylib.BeginTextureMode(_target);
             Raylib.ClearBackground(SceneManager.ActiveScene.BackgroundColour);
             Raylib.BeginMode2D(_camera.GetRaylibCamera());
-            
+
             RenderManager.DrawAll();
-            
             Raylib.EndMode2D();
-            
+
+            // Render UI stuff AFTER the texture so it doesn't get locked to game space when the camera moves around.
+            UIRenderManager.DrawAll();
             _cursor.Draw(Input.GetVirtualMousePositionUnclamped(), 1.0f);
             Raylib.EndTextureMode();
 

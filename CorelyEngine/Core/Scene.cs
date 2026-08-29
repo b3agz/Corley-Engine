@@ -39,8 +39,14 @@ public class Scene(string name, Camera camera) : IDisposable {
         AddObject(test);
         AddObject(Player);
 
-        TextObject text = new(new Vector2(200, 100), FontSize.Regular);
+        TextObject text = new(new Vector2(200, 100), FontSize.Large, false);
         text.Text = "Testing Tickles";
+        text.Colour = Color.DarkBlue;
+        AddObject(text);
+
+        TextObject uitext = new(new Vector2(10, 10), FontSize.Regular);
+        uitext.Text = "UI Text Stuff";
+        uitext.Colour = Color.White;
         AddObject(text);
 
     }

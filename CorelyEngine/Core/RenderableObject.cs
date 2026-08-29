@@ -28,6 +28,8 @@ public abstract class RenderableObject : CorleyObject {
 
     private uint _depth = 100;
 
+    private bool _isUI;
+
     /// <summary>
     /// The depth or sorting order of this object. Modifying this value automatically calls <see cref="RenderManager.SetDirty();"/>
     /// </summary>
@@ -42,18 +44,40 @@ public abstract class RenderableObject : CorleyObject {
         }
     }
 
-    protected RenderableObject() : base() { }
+    protected RenderableObject(bool isUI = false) : base() {
+        _isUI = isUI;
+        AddToRenderer();
+    }
 
-    protected RenderableObject(Vector2 position) : base(position) {
+    protected RenderableObject(Vector2 position, bool isUI = false) : base(position) {
         Position = position;
+        _isUI = isUI;
+        AddToRenderer();
     }
 
-    protected override void OnSubscribeToDraw() {
-        RenderManager.Register(this);
+    public override void SetEnabled(bool isEnabled) {
+
+        if (isEnabled) {
+            AddToRenderer();
+        }
+        else {
+            RemoveFromRenderer();
+        }
+        base.SetEnabled(isEnabled);
     }
 
-    protected override void OnUnsubscribeFromDraw() {
-        RenderManager.Unregister(this);
+    private void AddToRenderer() {
+        if (!_isUI)
+            RenderManager.Register(this);
+        else
+            UIRenderManager.Register(this);
+    }
+
+    private void RemoveFromRenderer() {
+        if (!_isUI)
+            RenderManager.Unregister(this);
+        else
+            UIRenderManager.Unregister(this);
     }
 
     /// <summary>

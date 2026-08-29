@@ -23,7 +23,7 @@ public abstract class CorleyObject : IDisposable {
         InternalStart();
     }
 
-    public void SetEnabled(bool isEnabled) {
+    public virtual void SetEnabled(bool isEnabled) {
         if (isEnabled == IsEnabled)
             return;
 
@@ -36,16 +36,11 @@ public abstract class CorleyObject : IDisposable {
 
     private void SubscribeToEngineEvents() {
         EngineEvents.OnUpdate += InternalUpdate;
-        OnSubscribeToDraw();
     }
 
     private void UnsubscribeFromEngineEvents() {
         EngineEvents.OnUpdate -= InternalUpdate;
-        OnUnsubscribeFromDraw();
     }
-
-    protected virtual void OnSubscribeToDraw() { }
-    protected virtual void OnUnsubscribeFromDraw() { }
 
     private void InternalStart() {
         SubscribeToEngineEvents();

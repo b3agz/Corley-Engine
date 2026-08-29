@@ -14,11 +14,12 @@ public class TextObject : RenderableObject {
     protected Font _font;
     public string Text { get; set; } = "";
     public FontSize FontSize { get; set; } = FontSize.Regular;
+    public Color Colour { get; set; } = Color.White;
 
     /// <summary>
     /// Constructs a new VisualObject.
     /// </summary>
-    public TextObject(FontSize fontSize = FontSize.Regular) : base() {
+    public TextObject(FontSize fontSize = FontSize.Regular, bool isUI = true) : base(true) {
         _font = LoadFontSafe(FONT_PATH);
         FontSize = fontSize;
     }
@@ -27,7 +28,7 @@ public class TextObject : RenderableObject {
     /// Constructs a new VisualObject at a specific position.
     /// </summary>
     /// <param name="fontPath">The path to the texture.</param>
-    public TextObject(Vector2 position, FontSize fontSize = FontSize.Regular) : base(position) {
+    public TextObject(Vector2 position, FontSize fontSize = FontSize.Regular, bool isUI = true) : base(position, isUI) {
         _font = LoadFontSafe(FONT_PATH);
         FontSize = fontSize;
     }
@@ -48,7 +49,7 @@ public class TextObject : RenderableObject {
 
     private void InternalDraw() {
 
-        Raylib.DrawTextPro(_font, Text, Position, Vector2.Zero, Rotation, (int)FontSize, 1f, Color.White);
+        Raylib.DrawTextPro(_font, Text, Position, Vector2.Zero, Rotation, (int)FontSize, 1f, Colour);
 
     }
 
