@@ -11,7 +11,7 @@ namespace CorleyEngine.Core;
 /// </summary>
 public abstract class Game {
 
-    protected Camera2D _camera;
+    protected Camera _camera;
     protected RenderTexture2D _target;
     protected CorelyCursor _cursor;
 
@@ -49,12 +49,7 @@ public abstract class Game {
         _target = Raylib.LoadRenderTexture(EngineConstants.RESOLUTION_WIDTH, EngineConstants.RESOLUTION_HEIGHT);
         Raylib.SetTextureFilter(_target.Texture, TextureFilter.Point);
 
-        _camera = new() {
-            Target = Vector2.Zero,
-            Offset = Vector2.Zero,
-            Rotation = 0.0f,
-            Zoom = 1.0f
-        };
+        _camera = new Camera();
 
         _cursor = new();
         Raylib.HideCursor();
@@ -84,21 +79,18 @@ public abstract class Game {
             float offsetY = (Raylib.GetScreenHeight() - (EngineConstants.RESOLUTION_HEIGHT * scale)) * 0.5f;
 
             // Mapping mouse
-            Vector2 rawMouse = Raylib.GetMousePosition();
-            float virtualX = (rawMouse.X - offsetX) / scale;
-            float virtualY = (rawMouse.Y - offsetY) / scale;
+            Vector2 virtualMouse = Input.GetMousePositionGameSpace();
 
             // Draw to texture
             Raylib.BeginTextureMode(_target);
             Raylib.ClearBackground(SceneManager.ActiveScene.BackgroundColour);
-            Raylib.BeginMode2D(_camera);
-
+            Raylib.BeginMode2D(_camera.GetRaylibCamera());
+            
             RenderManager.DrawAll();
-
+            
             Raylib.EndMode2D();
-
-            Vector2 virtualMouseUnclamped = new(virtualX, virtualY);
-            _cursor.Draw(virtualMouseUnclamped, 1.0f);
+            
+            _cursor.Draw(Input.GetMousePositionGameSpaceUnclamped(), 1.0f);
             Raylib.EndTextureMode();
 
             // Draw to window

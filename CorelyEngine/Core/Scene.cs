@@ -5,7 +5,7 @@ using CorleyEngine.UI;
 
 namespace CorleyEngine.Core;
 
-public class Scene(string name, Camera2D camera) : IDisposable {
+public class Scene(string name, Camera camera) : IDisposable {
 
     /// <summary>
     /// The name of this scene as it will appear in the editor and be referenced by.
@@ -17,7 +17,7 @@ public class Scene(string name, Camera2D camera) : IDisposable {
     /// <summary>
     /// The camera used to view this scene through.
     /// </summary>
-    public Camera2D Camera = camera;
+    public Camera Camera = camera;
 
     /// <summary>
     /// The actual player. This gets its own special property because of how important the player is.
