@@ -4,7 +4,7 @@ using CorleyEngine.Core;
 
 namespace CorleyEngine.UI;
 
-public class TextObject : CorleyObject {
+public class TextObject : RenderableObject {
 
     protected Font? _font;
     private readonly string _fontPath;
@@ -30,14 +30,6 @@ public class TextObject : CorleyObject {
         _font = LoadFontSafe(fontPath);
     }
 
-    protected override void OnSubscribeToDraw() {
-        // TODO: UI Render Manager
-    }
-
-    protected override void OnUnsubscribeFromDraw() {
-        // TODO: UI Render Manager
-    }
-
     private Font? LoadFontSafe(string path) {
         try {
             return Assets.LoadFont(path);
@@ -48,7 +40,7 @@ public class TextObject : CorleyObject {
         }
     }
 
-    public void OnDraw() {
+    public override void OnDraw() {
         InternalDraw();
     }
 

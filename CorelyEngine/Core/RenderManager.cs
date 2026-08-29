@@ -9,14 +9,19 @@ namespace CorleyEngine.Core;
 /// </summary>
 public static class RenderManager {
 
-    private static readonly List<SpriteObject> _visualObjects = new();
-    private static List<SpriteObject> _sortedObjects = new();
+    private static readonly List<RenderableObject> _visualObjects = new();
+    private static List<RenderableObject> _sortedObjects = new();
     private static bool _isDirty = true;
+
+    /// <summary>
+    /// Called when a something has been changed that necessitates a sorting of the render list.
+    /// </summary>
+    public static void SetDirty() => _isDirty = true;
 
     /// <summary>
     /// Registers a visual object to be managed by the RenderManager.
     /// </summary>
-    public static void Register(SpriteObject visualObject) {
+    public static void Register(RenderableObject visualObject) {
         if (!_visualObjects.Contains(visualObject)) {
             _visualObjects.Add(visualObject);
             _isDirty = true;
@@ -26,7 +31,7 @@ public static class RenderManager {
     /// <summary>
     /// Unregisters a visual object.
     /// </summary>
-    public static void Unregister(SpriteObject visualObject) {
+    public static void Unregister(RenderableObject visualObject) {
         if (_visualObjects.Remove(visualObject)) {
             _isDirty = true;
         }

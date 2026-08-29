@@ -94,7 +94,7 @@ class Program {
             // Trigger all active render objects.
             RenderManager.DrawAll();
 
-            text.OnDraw();
+            //text.OnDraw();
 
             Raylib.EndMode2D();
 

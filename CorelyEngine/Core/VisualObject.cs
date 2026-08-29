@@ -6,9 +6,9 @@ using CorleyEngine.Core;
 namespace CorleyEngine.Core;
 
 /// <summary>
-/// A base class for objects that have a visual presence in the scene.
+/// A base class for objects that render a sprite (texture) to the screen.
 /// </summary>
-public abstract class SpriteObject : CorleyObject {
+public abstract class SpriteObject : RenderableObject {
 
     protected Texture2D? _texture;
     private readonly string _texturePath;
@@ -32,14 +32,6 @@ public abstract class SpriteObject : CorleyObject {
         _texture = LoadTextureSafe(texturePath);
     }
 
-    protected override void OnSubscribeToDraw() {
-        RenderManager.Register(this);
-    }
-
-    protected override void OnUnsubscribeFromDraw() {
-        RenderManager.Unregister(this);
-    }
-
     private Texture2D? LoadTextureSafe(string path) {
         try {
             return Assets.LoadTexture(path);
@@ -50,7 +42,7 @@ public abstract class SpriteObject : CorleyObject {
         }
     }
 
-    public void OnDraw() {
+    public override void OnDraw() {
         InternalDraw();
     }
 
